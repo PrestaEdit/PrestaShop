@@ -266,7 +266,8 @@ class PHP_CodeSniffer
         } else {
             $newClassName = $className;
         }
-
+				
+				$newClassName = str_replace('CodeSniffer_', '', $newClassName);
         $path = str_replace('_', '/', $newClassName).'.php';
 
         if (is_file(dirname(__FILE__).'/'.$path) === true) {
