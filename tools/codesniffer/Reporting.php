@@ -17,7 +17,7 @@
 if (is_file(dirname(__FILE__).'/../CodeSniffer.php') === true) {
     include_once dirname(__FILE__).'/../CodeSniffer.php';
 } else {
-    include_once 'PHP/CodeSniffer.php';
+    include_once 'CodeSniffer.php';
 }
 
 /**
