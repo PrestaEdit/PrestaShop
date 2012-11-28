@@ -753,7 +753,7 @@ class PHP_CodeSniffer
 
             $ruleset = simplexml_load_file($rulesetPath);
             if ($ruleset === false) {
-                throw new PHP_CodeSniffer_Exception("Ruleset $rulesetPath is not valid");
+                throw new PrestaShopException("Ruleset $rulesetPath is not valid");
             }
 
             foreach ($ruleset->rule as $rule) {
@@ -864,7 +864,7 @@ class PHP_CodeSniffer
         } else {
             if (is_file($path) === false) {
                 $error = "Referenced sniff $sniff does not exist";
-                throw new PHP_CodeSniffer_Exception($error);
+                throw new PrestaShopException($error);
             }
 
             if (substr($path, -9) === 'Sniff.php') {
@@ -1031,7 +1031,7 @@ class PHP_CodeSniffer
                 $tokens = $this->listeners[$listenerClass]->register();
                 if (is_array($tokens) === false) {
                     $msg = "Sniff $listenerClass register() method must return an array";
-                    throw new PHP_CodeSniffer_Exception($msg);
+                    throw new PrestaShopException($msg);
                 }
 
                 foreach ($tokens as $token) {
@@ -1263,7 +1263,7 @@ class PHP_CodeSniffer
     public function processFile($file, $contents=null)
     {
         if ($contents === null && file_exists($file) === false) {
-            throw new PHP_CodeSniffer_Exception("Source file $file does not exist");
+            throw new PrestaShopException("Source file $file does not exist");
         }
 
         $filePath = realpath($file);
@@ -1481,7 +1481,7 @@ class PHP_CodeSniffer
     public function generateDocs($standard, array $sniffs=array(), $generator='Text')
     {
         if (class_exists('PHP_CodeSniffer_DocGenerators_'.$generator, true) === false) {
-            throw new PHP_CodeSniffer_Exception('Class PHP_CodeSniffer_DocGenerators_'.$generator.' not found');
+            throw new PrestaShopException('Class PHP_CodeSniffer_DocGenerators_'.$generator.' not found');
         }
 
         $class     = "PHP_CodeSniffer_DocGenerators_$generator";
@@ -2068,7 +2068,7 @@ class PHP_CodeSniffer
                 && is_writable($configFile) === false
             ) {
                 $error = "Config file $configFile is not writable";
-                throw new PHP_CodeSniffer_Exception($error);
+                throw new PrestaShopException($error);
             }
         }
 
