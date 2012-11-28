@@ -837,7 +837,7 @@ class PHP_CodeSniffer
                 $parts = explode('.', $sniff);
                 if (count($parts) < 3) {
                     $error = "Referenced sniff $sniff does not exist";
-                    throw new PHP_CodeSniffer_Exception($error);
+                    throw new PrestaShopException($error);
                 }
 
                 $path = $parts[0].'/Sniffs/'.$parts[1].'/'.$parts[2].'Sniff.php';
