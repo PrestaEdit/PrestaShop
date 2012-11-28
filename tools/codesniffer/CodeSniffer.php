@@ -829,7 +829,7 @@ class PHP_CodeSniffer
             $sniff = basename($path);
         } else if (is_file($sniff) === false) {
             // See if this is a whole standard being referenced.
-            $path = realpath(dirname(__FILE__).'/CodeSniffer/Standards/'.$sniff);
+            $path = realpath(dirname(__FILE__).'/Standards/'.$sniff);
             if (is_dir($path) === true) {
                 $isDir = true;
             } else {
@@ -841,7 +841,7 @@ class PHP_CodeSniffer
                 }
 
                 $path = $parts[0].'/Sniffs/'.$parts[1].'/'.$parts[2].'Sniff.php';
-                $path = realpath(dirname(__FILE__).'/CodeSniffer/Standards/'.$path);
+                $path = realpath(dirname(__FILE__).'/Standards/'.$path);
                 if ($path === false && self::$standardDir !== '') {
                     // The sniff is not locally installed, so check if it is being
                     // referenced as a remote sniff outside the install. We do this by
@@ -1984,7 +1984,7 @@ class PHP_CodeSniffer
     public static function isInstalledStandard($standard)
     {
         $standardDir  = dirname(__FILE__);
-        $standardDir .= '/CodeSniffer/Standards/'.$standard;
+        $standardDir .= '/Standards/'.$standard;
         if (is_file($standardDir.'/ruleset.xml') === true) {
             return true;
         } else {
