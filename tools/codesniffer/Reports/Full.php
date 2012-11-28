@@ -59,23 +59,23 @@ class PHP_CodeSniffer_Reports_Full implements PHP_CodeSniffer_Report
                 continue;
             }
 
-            echo PHP_EOL.'FILE: ';
+            echo "<br />".'FILE: ';
             if (strlen($filename) <= ($width - 9)) {
                 echo $filename;
             } else {
                 echo '...'.substr($filename, (strlen($filename) - ($width - 9)));
             }
 
-            echo PHP_EOL;
-            echo str_repeat('-', $width).PHP_EOL;
+            echo "<br />";
+            echo str_repeat('-', $width)."<br />";
 
             echo 'FOUND '.$file['errors'].' ERROR(S) ';
             if ($file['warnings'] > 0) {
                 echo 'AND '.$file['warnings'].' WARNING(S) ';
             }
 
-            echo 'AFFECTING '.count($file['messages']).' LINE(S)'.PHP_EOL;
-            echo str_repeat('-', $width).PHP_EOL;
+            echo 'AFFECTING '.count($file['messages']).' LINE(S)'."<br />";
+            echo str_repeat('-', $width)."<br />";
 
             // Work out the max line number for formatting.
             $maxLine = 0;
@@ -117,7 +117,7 @@ class PHP_CodeSniffer_Reports_Full implements PHP_CodeSniffer_Report
                         $errorMsg = wordwrap(
                             $message,
                             $maxErrorSpace,
-                            PHP_EOL.$paddingLine2
+                            "<br />".$paddingLine2
                         );
 
                         echo ' '.str_repeat(' ', $padding).$line.' | '.$error['type'];
@@ -127,20 +127,20 @@ class PHP_CodeSniffer_Reports_Full implements PHP_CodeSniffer_Report
                             }
                         }
 
-                        echo ' | '.$errorMsg.PHP_EOL;
+                        echo ' | '.$errorMsg."<br />";
                         $errorsShown++;
                     }//end foreach
                 }//end foreach
             }//end foreach
 
-            echo str_repeat('-', $width).PHP_EOL.PHP_EOL;
+            echo str_repeat('-', $width)."<br />"."<br />";
         }//end foreach
 
         if ($toScreen === true
             && PHP_CODESNIFFER_INTERACTIVE === false
             && class_exists('PHP_Timer', false) === true
         ) {
-            echo PHP_Timer::resourceUsage().PHP_EOL.PHP_EOL;
+            echo PHP_Timer::resourceUsage()."<br />"."<br />";
         }
 
         return $errorsShown;
