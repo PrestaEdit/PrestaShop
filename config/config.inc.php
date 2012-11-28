@@ -60,7 +60,6 @@ if (_PS_DEBUG_PROFILING_)
 	include_once(_PS_TOOL_DIR_.'profiling/Hook.php');
 	include_once(_PS_TOOL_DIR_.'profiling/Db.php');
 }
-
 if (_PS_DEBUG_CODE_SNIFFER_)
 {
 	include_once(_PS_TOOL_DIR_.'codesniffer/CLI.php');
@@ -69,6 +68,28 @@ if (_PS_DEBUG_CODE_SNIFFER_)
 	{
 		$code_sniffer = new PHP_CodeSniffer_CLI();
 		$code_sniffer->checkRequirements();
+		
+		$values = array();
+		$values['standard'] = 'PrestaShop';
+    $values['files'] = array(_PS_CLASS_DIR_.'/Context.php');
+		$values['sniffs'] = array();
+    $values['generator'] = '';
+    $values['verbosity'] = null;
+    $values['explain'] = false;
+    $values['local'] = false;
+		
+    $values['errorSeverity'] = null;
+    $values['warningSeverity'] = null;
+    $values['interactive'] = null;
+		$values['encoding'] = null; 
+		$values['reports'] = array();		
+    $values['showSources'] = false;
+    $values['reportFile'] = null;
+    $values['reportWidth'] = null;
+		
+		$values['tabWidth'] = '4';
+		
+		$code_sniffer->process($values);
 	}
 	catch(PrestaShopException $exception)
 	{
