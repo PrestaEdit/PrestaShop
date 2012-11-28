@@ -627,7 +627,7 @@ class PHP_CodeSniffer
                     // Might be a custom ruleset file.
                     $ruleset = simplexml_load_file($path);
                     if ($ruleset === false) {
-                        throw new PHP_CodeSniffer_Exception("Ruleset $path is not valid");
+                        throw new PrestaShopException("Ruleset $path is not valid");
                     }
 
                     // See comments in ELSE IF condition above for why we do this.
