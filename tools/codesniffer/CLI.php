@@ -63,12 +63,12 @@ class PHP_CodeSniffer_CLI
     {
         // Check the PHP version.
         if (version_compare(PHP_VERSION, '5.1.2') === -1) {
-            echo 'ERROR: PHP_CodeSniffer requires PHP version 5.1.2 or greater.'.PHP_EOL;
+             throw new PrestaShopException('ERROR: PHP_CodeSniffer requires PHP version 5.1.2 or greater.');
             exit(2);
         }
 
         if (extension_loaded('tokenizer') === false) {
-            echo 'ERROR: PHP_CodeSniffer requires the tokenizer extension to be enabled.'.PHP_EOL;
+             throw new PrestaShopException('ERROR: PHP_CodeSniffer requires the tokenizer extension to be enabled.');
             exit(2);
         }
 
