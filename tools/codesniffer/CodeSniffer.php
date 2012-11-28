@@ -594,8 +594,7 @@ class PHP_CodeSniffer
         } else if (is_file($standard) === true) {
             // Might be a custom ruleset file.
             $ruleset = simplexml_load_file($standard);
-            if ($ruleset === false) {
-                throw new PHP_CodeSniffer_Exception("Ruleset $standard is not valid");
+            if ($ruleset === false) {throw new PrestaShopException("Ruleset $standard is not valid");
             }
 
             if (basename($standard) === 'ruleset.xml') {
