@@ -66,12 +66,13 @@ if (_PS_DEBUG_CODE_SNIFFER_)
 	
 	try 
 	{
+		@ini_set ('max_execution_time', 0);
+		
 		$code_sniffer = new PHP_CodeSniffer_CLI();
 		$code_sniffer->checkRequirements();
 		
 		$values = array();
 		$values['standard'] = 'PrestaShop';
-    $values['files'] = array(_PS_CLASS_DIR_.'/Context.php');
 		$values['sniffs'] = array();
     $values['generator'] = '';
     $values['verbosity'] = null;
