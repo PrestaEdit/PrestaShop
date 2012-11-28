@@ -160,60 +160,6 @@ class PHP_CodeSniffer_CLI
 
     }//end getDefaults()
 
-
-    /**
-     * Process the command line arguments and returns the values.
-     *
-     * @return array
-     */
-    public function getCommandLineValues()
-    {
-        if (defined('PHP_CODESNIFFER_IN_TESTS') === true) {
-            return array();
-        }
-
-        if (empty($this->values) === false) {
-            return $this->values;
-        }
-
-        $values = $this->getDefaults();
-
-        for ($i = 1; $i < $_SERVER['argc']; $i++) {
-            $arg = $_SERVER['argv'][$i];
-            if ($arg === '') {
-                continue;
-            }
-
-            if ($arg{0} === '-') {
-                if ($arg === '-' || $arg === '--') {
-                    // Empty argument, ignore it.
-                    continue;
-                }
-
-                if ($arg{1} === '-') {
-                    $values
-                        = $this->processLongArgument(substr($arg, 2), $i, $values);
-                } else {
-                    $switches = str_split($arg);
-                    foreach ($switches as $switch) {
-                        if ($switch === '-') {
-                            continue;
-                        }
-
-                        $values = $this->processShortArgument($switch, $i, $values);
-                    }
-                }
-            } else {
-                $values = $this->processUnknownArgument($arg, $i, $values);
-            }//end if
-        }//end for
-
-        $this->values = $values;
-        return $values;
-
-    }//end getCommandLineValues()
-
-
     /**
      * Processes a short (-e) command line argument.
      *

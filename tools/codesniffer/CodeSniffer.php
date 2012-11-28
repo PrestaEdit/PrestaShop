@@ -466,8 +466,9 @@ class PHP_CodeSniffer
         }
 
         $reporting    = new PHP_CodeSniffer_Reporting();
-        $cliValues    = $this->cli->getCommandLineValues();
-        $showProgress = $cliValues['showProgress'];
+        //$cliValues    = $this->cli->getCommandLineValues();
+        //$showProgress = $cliValues['showProgress'];
+        $showProgress = false;
 
         if (PHP_CODESNIFFER_VERBOSITY > 0) {
             $numSniffs = count($this->listeners);
@@ -1340,7 +1341,10 @@ class PHP_CodeSniffer
         */
 
         $reporting = new PHP_CodeSniffer_Reporting();
-        $cliValues = $this->cli->getCommandLineValues();
+        //$cliValues = $this->cli->getCommandLineValues();
+				$cliValues = array();
+        $cliValues['showSources'] = false;
+        $cliValues['reportWidth'] = '250';
 
         // Get current violations and then clear the list to make sure
         // we only print violations for a single file each time.
@@ -1359,25 +1363,6 @@ class PHP_CodeSniffer
 
             if ($numErrors === 0) {
                 continue;
-            }
-
-            echo '<ENTER> to recheck, [s] to skip or [q] to quit : ';
-            $input = fgets(STDIN);
-            $input = trim($input);
-
-            switch ($input) {
-            case 's':
-                break;
-            case 'q':
-                exit(0);
-                break;
-            default:
-                // Repopulate the sniffs because some of them save their state
-                // and only clear it when the file changes, but we are rechecking
-                // the same file.
-                $this->populateTokenListeners();
-                $phpcsFile = $this->_processFile($file, $contents);
-                break;
             }
         }//end while
 
