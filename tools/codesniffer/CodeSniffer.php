@@ -614,7 +614,7 @@ class PHP_CodeSniffer
 
             $standard = (string) $ruleset['name'];
         } else {
-            self::$standardDir = realpath(dirname(__FILE__).'/CodeSniffer/Standards/'.$standard);
+            self::$standardDir = realpath(dirname(__FILE__).'/Standards/'.$standard);
             if (is_dir(self::$standardDir) === false) {
                 // This isn't looking good. Let's see if this
                 // is a relative path to a custom standard.
