@@ -20,24 +20,19 @@ if (class_exists('PHP_CodeSniffer_Exception', true) === false) {
     throw new Exception('Class PHP_CodeSniffer_Exception not found');
 }
 
-if (class_exists('PHP_CodeSniffer_File', true) === false) {
-    throw new PHP_CodeSniffer_Exception('Class PHP_CodeSniffer_File not found');
+if (class_exists('PHP_CodeSniffer_File', true) === false) {throw new PrestaShopException('Class PHP_CodeSniffer_File not found');
 }
 
-if (class_exists('PHP_CodeSniffer_Tokens', true) === false) {
-    throw new PHP_CodeSniffer_Exception('Class PHP_CodeSniffer_Tokens not found');
+if (class_exists('PHP_CodeSniffer_Tokens', true) === false) {throw new PrestaShopException('Class PHP_CodeSniffer_Tokens not found');
 }
 
-if (class_exists('PHP_CodeSniffer_CLI', true) === false) {
-    throw new PHP_CodeSniffer_Exception('Class PHP_CodeSniffer_CLI not found');
+if (class_exists('PHP_CodeSniffer_CLI', true) === false) {throw new PrestaShopException('Class PHP_CodeSniffer_CLI not found');
 }
 
-if (interface_exists('PHP_CodeSniffer_Sniff', true) === false) {
-    throw new PHP_CodeSniffer_Exception('Interface PHP_CodeSniffer_Sniff not found');
+if (interface_exists('PHP_CodeSniffer_Sniff', true) === false) {throw new PrestaShopException('Interface PHP_CodeSniffer_Sniff not found');
 }
 
-if (interface_exists('PHP_CodeSniffer_MultiFileSniff', true) === false) {
-    throw new PHP_CodeSniffer_Exception('Interface PHP_CodeSniffer_MultiFileSniff not found');
+if (interface_exists('PHP_CodeSniffer_MultiFileSniff', true) === false) {throw new PrestaShopException('Interface PHP_CodeSniffer_MultiFileSniff not found');
 }
 
 /**
