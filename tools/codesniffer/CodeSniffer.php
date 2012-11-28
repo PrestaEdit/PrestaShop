@@ -402,14 +402,14 @@ class PHP_CodeSniffer
     {
         if (is_array($files) === false) {
             if (is_string($files) === false || $files === null) {
-                throw new PHP_CodeSniffer_Exception('$file must be a string');
+                throw new PrestaShopException('$file must be a string');
             }
 
             $files = array($files);
         }
 
         if (is_string($standard) === false || $standard === null) {
-            throw new PHP_CodeSniffer_Exception('$standard must be a string');
+            throw new PrestaShopException('$standard must be a string');
         }
 
         // Reset the members.
