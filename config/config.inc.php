@@ -90,6 +90,11 @@ if (_PS_DEBUG_CODE_SNIFFER_)
 		
 		$values['tabWidth'] = '4';
 		
+		$values['files'] = array();
+    $files = include(_PS_CACHE_DIR_.'class_index.php');
+    foreach($files as $file)
+    	$values['files'][] = _PS_ROOT_DIR_.'/'.$file;
+		
 		$code_sniffer->process($values);
 	}
 	catch(PrestaShopException $exception)
