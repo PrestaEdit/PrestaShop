@@ -63,7 +63,17 @@ if (_PS_DEBUG_PROFILING_)
 
 if (_PS_DEBUG_CODE_SNIFFER_)
 {
-	include_once(_PS_TOOL_DIR_.'codesniffer/CodeSniffer.php');
+	include_once(_PS_TOOL_DIR_.'codesniffer/CLI.php');
+	
+	try 
+	{
+		$code_sniffer = new PHP_CodeSniffer_CLI();
+		$code_sniffer->checkRequirements();
+	}
+	catch(PrestaShopException $exception)
+	{
+		$exception->displayMessage();
+	}
 }
 
 /* Redefine REQUEST_URI if empty (on some webservers...) */
