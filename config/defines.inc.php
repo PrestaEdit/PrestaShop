@@ -43,7 +43,18 @@ else
 
 define('_PS_DEBUG_PROFILING_', false);
 define('_PS_MODE_DEMO_', false);
+
 define('_PS_DEBUG_CODE_SNIFFER_', false);
+if(_PS_DEBUG_CODE_SNIFFER_)
+{
+	define('CODE_SNIFFER_ALL', '1');
+	define('CODE_SNIFFER_MODULES', '2');
+	define('CODE_SNIFFER_CLASSES', '3');
+	define('CODE_SNIFFER_CONTROLLER', '4');
+	define('CODE_SNIFFER_OVERRIDES', '5');
+	
+	define('_PS_DEBUG_CODE_SNIFFER_TYPE_', CODE_SNIFFER_OVERRIDES);
+}
 
 $currentDir = dirname(__FILE__);
 
