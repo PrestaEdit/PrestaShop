@@ -91,9 +91,14 @@ if (_PS_DEBUG_CODE_SNIFFER_)
 		$values['tabWidth'] = '4';
 		
 		$values['files'] = array();
-    $files = include(_PS_CACHE_DIR_.'class_index.php');
-    foreach($files as $file)
-    	$values['files'][] = _PS_ROOT_DIR_.'/'.$file;
+		switch(_PS_DEBUG_CODE_SNIFFER_TYPE_)
+		{
+			case CODE_SNIFFER_ALL:
+		    $files = include(_PS_CACHE_DIR_.'class_index.php');
+		    foreach($files as $file)
+		    	$values['files'][] = _PS_ROOT_DIR_.'/'.$file;
+		    break;
+		}
 		
 		$code_sniffer->process($values);
 	}
