@@ -495,7 +495,7 @@ class PHP_CodeSniffer_CLI
         if (PHP_CodeSniffer::isInstalledStandard($values['standard']) === false) {
             // They didn't select a valid coding standard, so help them
             // out by letting them know which standards are installed.
-            throw PrestaShopException( 'ERROR: the "'.$values['standard'].'" coding standard is not installed. ');
+            throw new PrestaShopException( 'ERROR: the "'.$values['standard'].'" coding standard is not installed. ');
             $this->printInstalledStandards();
             exit(2);
         }
@@ -514,7 +514,7 @@ class PHP_CodeSniffer_CLI
 
             if ($fileContents === '') {
                 // No files and no content passed in.
-                echo 'ERROR: You must supply at least one file or directory to process.'.PHP_EOL.PHP_EOL;
+                 throw new PrestaShopException(  'ERROR: You must supply at least one file or directory to process.');
                 $this->printUsage();
                 exit(2);
             }
