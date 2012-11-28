@@ -495,7 +495,7 @@ class PHP_CodeSniffer_CLI
         if (PHP_CodeSniffer::isInstalledStandard($values['standard']) === false) {
             // They didn't select a valid coding standard, so help them
             // out by letting them know which standards are installed.
-            echo 'ERROR: the "'.$values['standard'].'" coding standard is not installed. ';
+            throw PrestaShopException( 'ERROR: the "'.$values['standard'].'" coding standard is not installed. ');
             $this->printInstalledStandards();
             exit(2);
         }
