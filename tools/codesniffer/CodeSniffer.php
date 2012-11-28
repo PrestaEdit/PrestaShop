@@ -1942,7 +1942,7 @@ class PHP_CodeSniffer
         $installedStandards = array();
 
         if ($standardsDir === '') {
-            $standardsDir = dirname(__FILE__).'/CodeSniffer/Standards';
+            $standardsDir = dirname(__FILE__).'/Standards';
         }
 
         $di = new DirectoryIterator($standardsDir);
