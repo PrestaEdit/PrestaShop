@@ -5,6 +5,9 @@
 	<div class="sf-contener clearfix">
 		<ul class="sf-menu clearfix">
 			{$MENU}
+			{foreach from=$items item=menu name=menu_items}
+				<li {$menu.selected}><a href="{$menu.link}">{$menu.name}</a></li>
+			{/foreach}
 			{if $MENU_SEARCH}
 				<li class="sf-search noBack" style="float:right">
 					<form id="searchbox" action="{$link->getPageLink('search')}" method="get">
