@@ -568,8 +568,8 @@ class Blocktopmenu extends Module
 					$supplier = new Supplier((int)$id, (int)$id_lang);
 					if (!is_null($supplier->id))
 					{
-						$link = new Link;
-						$this->_menu .= '<li'.$selected.'><a href="'.$link->getSupplierLink((int)$id, $supplier->link_rewrite).'">'.$supplier->name.'</a></li>'.PHP_EOL;
+						$link = new Link;						
+						$menu[] = array('selected' => $selected, 'link' => $link->getSupplierLink((int)$id, $supplier->link_rewrite), 'name' => $supplier->name);
 					}
 					break;
 
