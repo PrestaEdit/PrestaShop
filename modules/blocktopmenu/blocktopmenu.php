@@ -578,8 +578,8 @@ class Blocktopmenu extends Module
 					$shop = new Shop((int)$id);
 					if (Validate::isLoadedObject($shop))
 					{
-						$link = new Link;
-						$this->_menu .= '<li'.$selected.'><a href="'.$shop->getBaseURL().'">'.$shop->name.'</a></li>'.PHP_EOL;
+						$link = new Link;						
+						$menu[] = array('selected' => $selected, 'link' => $shop->getBaseURL(), 'name' => $shop->name);
 					}
 					break;
 				case 'LNK':
