@@ -509,6 +509,7 @@ class Blocktopmenu extends Module
 		$menu_items = $this->getMenuItems();
 		$id_lang = (int)$this->context->language->id;
 		$id_shop = (int)Shop::getContextShopID();
+		$menu = array();
 
 		foreach ($menu_items as $item)
 		{
@@ -595,6 +596,7 @@ class Blocktopmenu extends Module
 					break;
 			}
 		}
+		return $menu;
 	}
 
 	private function getCategoryOption($id_category = 1, $id_lang = false, $id_shop = false, $recursive = true)
@@ -722,7 +724,7 @@ class Blocktopmenu extends Module
 		Tools::enableCache();
 		if (!$this->isCached('blocktopmenu.tpl', $smarty_cache_id))
 		{
-			$this->makeMenu();
+			$this->smarty->assign('items', $this->makeMenu());
 			$this->smarty->assign('MENU_SEARCH', Configuration::get('MOD_BLOCKTOPMENU_SEARCH'));
 			$this->smarty->assign('MENU', $this->_menu);
 			$this->smarty->assign('this_path', $this->_path);
