@@ -529,7 +529,7 @@ class Blocktopmenu extends Module
 					$selected = ($this->page_name == 'product' && (Tools::getValue('id_product') == $id)) ? ' class="sfHover"' : '';
 					$product = new Product((int)$id, true, (int)$id_lang);
 					if (!is_null($product->id))
-						$this->_menu .= '<li'.$selected.'><a href="'.$product->getLink().'">'.$product->name.'</a></li>'.PHP_EOL;
+						$menu[] = array('selected' => $selected, 'link' => $product->getLink(), 'name' => $product->name);
 					break;
 
 				case 'CMS':
