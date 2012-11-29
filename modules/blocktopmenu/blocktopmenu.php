@@ -536,7 +536,7 @@ class Blocktopmenu extends Module
 					$selected = ($this->page_name == 'cms' && (Tools::getValue('id_cms') == $id)) ? ' class="sfHover"' : '';
 					$cms = CMS::getLinks((int)$id_lang, array($id));
 					if (count($cms))
-						$this->_menu .= '<li'.$selected.'><a href="'.$cms[0]['link'].'">'.$cms[0]['meta_title'].'</a></li>'.PHP_EOL;
+						$menu[] = array('selected' => $selected, 'link' => $cms[0]['link'], 'name' => $cms[0]['meta_title']);
 					break;
 
 				case 'CMS_CAT':
