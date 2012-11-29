@@ -558,8 +558,8 @@ class Blocktopmenu extends Module
 							$manufacturer->link_rewrite = Tools::link_rewrite($manufacturer->name, false);
 						else
 							$manufacturer->link_rewrite = 0;
-						$link = new Link;
-						$this->_menu .= '<li'.$selected.'><a href="'.$link->getManufacturerLink((int)$id, $manufacturer->link_rewrite).'">'.$manufacturer->name.'</a></li>'.PHP_EOL;
+						$link = new Link;						
+						$menu[] = array('selected' => $selected, 'link' => $link->getManufacturerLink((int)$id, $manufacturer->link_rewrite), 'name' => $manufacturer->name);
 					}
 					break;
 
