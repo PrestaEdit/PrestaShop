@@ -529,14 +529,14 @@ class Blocktopmenu extends Module
 					$selected = ($this->page_name == 'product' && (Tools::getValue('id_product') == $id)) ? ' class="sfHover"' : '';
 					$product = new Product((int)$id, true, (int)$id_lang);
 					if (!is_null($product->id))
-						$menu[] = array('selected' => $selected, 'link' => $product->getLink(), 'new_window' => 1, 'name' => $product->name);
+						$menu[] = array('selected' => $selected, 'link' => $product->getLink(), 'new_window' => 0, 'name' => $product->name);
 					break;
 
 				case 'CMS':
 					$selected = ($this->page_name == 'cms' && (Tools::getValue('id_cms') == $id)) ? ' class="sfHover"' : '';
 					$cms = CMS::getLinks((int)$id_lang, array($id));
 					if (count($cms))
-						$menu[] = array('selected' => $selected, 'link' => $cms[0]['link'], 'new_window' => 1, 'name' => $cms[0]['meta_title']);
+						$menu[] = array('selected' => $selected, 'link' => $cms[0]['link'], 'new_window' => 0, 'name' => $cms[0]['meta_title']);
 					break;
 
 				case 'CMS_CAT':
@@ -559,7 +559,7 @@ class Blocktopmenu extends Module
 						else
 							$manufacturer->link_rewrite = 0;
 						$link = new Link;						
-						$menu[] = array('selected' => $selected, 'link' => $link->getManufacturerLink((int)$id, $manufacturer->link_rewrite), 'new_window' => 1, 'name' => $manufacturer->name);
+						$menu[] = array('selected' => $selected, 'link' => $link->getManufacturerLink((int)$id, $manufacturer->link_rewrite), 'new_window' => 0, 'name' => $manufacturer->name);
 					}
 					break;
 
@@ -569,7 +569,7 @@ class Blocktopmenu extends Module
 					if (!is_null($supplier->id))
 					{
 						$link = new Link;						
-						$menu[] = array('selected' => $selected, 'link' => $link->getSupplierLink((int)$id, $supplier->link_rewrite), 'new_window' => 1, 'name' => $supplier->name);
+						$menu[] = array('selected' => $selected, 'link' => $link->getSupplierLink((int)$id, $supplier->link_rewrite), 'new_window' => 0, 'name' => $supplier->name);
 					}
 					break;
 
@@ -579,7 +579,7 @@ class Blocktopmenu extends Module
 					if (Validate::isLoadedObject($shop))
 					{
 						$link = new Link;						
-						$menu[] = array('selected' => $selected, 'link' => $shop->getBaseURL(), 'name' => $shop->name);
+						$menu[] = array('selected' => $selected, 'link' => $shop->getBaseURL(),'new_window' => 0, 'name' => $shop->name);
 					}
 					break;
 				case 'LNK':
@@ -591,7 +591,7 @@ class Blocktopmenu extends Module
 							$default_language = Configuration::get('PS_LANG_DEFAULT');
 							$link = MenuTopLinks::get($link[0]['id_linksmenutop'], $default_language, (int)Shop::getContextShopID());
 						}						
-						$menu[] = array('selected' => '', 'link' => $link[0]['link'], 'new_window' => 1, 'name' => $link[0]['label']);
+						$menu[] = array('selected' => '', 'link' => $link[0]['link'], 'new_window' => $link[0]['new_window'], 'name' => $link[0]['label']);
 					}
 					break;
 			}
