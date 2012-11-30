@@ -541,12 +541,8 @@ class Blocktopmenu extends Module
 
 				case 'CMS_CAT':
 					$category = new CMSCategory((int)$id, (int)$id_lang);
-					if (count($category))
-					{
-						$this->_menu .= '<li><a href="'.$category->getLink().'">'.$category->name.'</a>';
-						$this->getCMSMenuItems($category->id);
-						$this->_menu .= '</li>'.PHP_EOL;
-					}
+					if (count($category))						
+						$menu[] = array('selected' => '', 'link' => $category->getLink(), 'new_window' => 0, 'name' => $category->name, 'items' => $this->getCMSMenuItems($category->id));
 					break;
 
 				case 'MAN':
