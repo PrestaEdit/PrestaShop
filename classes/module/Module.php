@@ -117,6 +117,9 @@ abstract class ModuleCore
 
 	/** @var Smarty_Data */
 	protected $smarty;
+
+	/** @var string template name for page content */
+	protected $template;
 	
 	
 	const CACHE_FILE_MODULES_LIST = '/config/xml/modules_list.xml';
@@ -1559,8 +1562,11 @@ abstract class ModuleCore
 		return Module::_isTemplateOverloadedStatic($this->name, $template);
 	}
 
-	public function display($file, $template, $cacheId = null, $compileId = null)
+	public function display($file, $template = null, $cacheId = null, $compileId = null)
 	{
+		if($template == null)
+			$template = $this->template;
+		
 		if (($overloaded = Module::_isTemplateOverloadedStatic(basename($file, '.php'), $template)) === null)
 			$result = Tools::displayError('No template found for module').' '.basename($file, '.php');
 		else
@@ -1969,6 +1975,11 @@ abstract class ModuleCore
 		file_put_contents($override_path, $code);
 
 		return true;
+	}
+	
+	public function setTemplate($template)
+	{
+		$this->template = $template;
 	}
 }
 
