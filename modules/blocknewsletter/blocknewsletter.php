@@ -508,8 +508,14 @@ class Blocknewsletter extends Module
 
 	public function hookDisplayLeftColumn($params)
 	{
+		if(!empty($params['tpl']))
+			$this->setTemplate($params['tpl']);
+		else
+			$this->setTemplate('blocknewsletter.tpl');
+		
 		$this->_prepareHook($params);
-		return $this->display(__FILE__, 'blocknewsletter.tpl');
+		
+		return $this->display(__FILE__);
 	}
 
 	public function hookDisplayHeader($params)
