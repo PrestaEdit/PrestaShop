@@ -307,10 +307,13 @@ class FrontControllerCore extends Controller
 		$meta_language = array();
 		foreach ($languages as $lang)
 			$meta_language[] = $lang['iso_code'];
+			
+		// Get Mobile Device
+		$this->context->getMobileDevice();
 
 		$this->context->smarty->assign(array(
 			// Usefull for layout.tpl
-			'mobile_device' => $this->context->getMobileDevice(),
+			'mobile_device' => $this->context->mobile_device,
 			'link' => $link,
 			'cart' => $cart,
 			'currency' => $currency,
@@ -344,12 +347,6 @@ class FrontControllerCore extends Controller
 			'request' => $link->getPaginationLink(false, false, false, true)
 		));
 
-		// Add the tpl files directory for mobile
-		if ($this->context->getMobileDevice() != false)
-			$this->context->smarty->assign(array(
-				'tpl_mobile_uri' => _PS_THEME_MOBILE_DIR_,
-			));
-
 		// Deprecated
 		$this->context->smarty->assign(array(
 			'id_currency_cookie' => (int)$currency->id,
@@ -373,13 +370,21 @@ class FrontControllerCore extends Controller
 			'pic_dir' => _THEME_PROD_PIC_DIR_
 		);
 
-		// Add the images directory for mobile
-		if ($this->context->getMobileDevice() != false)
+		
+
+		if ($this->context->mobile_device != false)
+		{
+			// Add the tpl files directory for mobile
+			$this->context->smarty->assign(array(
+				'tpl_mobile_uri' => _PS_THEME_MOBILE_DIR_, 
+			));
+			
+			// Add the images directory for mobile
 			$assign_array['img_mobile_dir'] = _THEME_MOBILE_IMG_DIR_;
 
-		// Add the CSS directory for mobile
-		if ($this->context->getMobileDevice() != false)
+			// Add the CSS directory for mobile
 			$assign_array['css_mobile_dir'] = _THEME_MOBILE_CSS_DIR_;
+		}
 
 		foreach ($assign_array as $assign_key => $assign_value)
 			if (substr($assign_value, 0, 1) == '/' || $protocol_content == 'https://')
