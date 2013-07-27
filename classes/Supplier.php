@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,8 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 7310 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -96,7 +95,7 @@ class SupplierCore extends ObjectModel
 
 	public function getLink()
 	{
-		return Tools::link_rewrite($this->name, false);
+		return Tools::link_rewrite($this->name);
 	}
 
 	/**
@@ -141,6 +140,7 @@ class SupplierCore extends ObjectModel
 					WHERE ps.`id_supplier` = '.(int)$supplier['id_supplier'].'
 					AND ps.id_product_attribute = 0'.
 					($active ? ' AND product_shop.`active` = 1' : '').
+					' AND product_shop.`visibility` NOT IN ("none")'.
 					($all_groups ? '' :'
 					AND ps.`id_product` IN (
 						SELECT cp.`id_product`
@@ -157,7 +157,7 @@ class SupplierCore extends ObjectModel
 		$rewrite_settings = (int)Configuration::get('PS_REWRITING_SETTINGS');
 		for ($i = 0; $i < $nb_suppliers; $i++)
 			if ($rewrite_settings)
-				$suppliers[$i]['link_rewrite'] = Tools::link_rewrite($suppliers[$i]['name'], false);
+				$suppliers[$i]['link_rewrite'] = Tools::link_rewrite($suppliers[$i]['name']);
 			else
 				$suppliers[$i]['link_rewrite'] = 0;
 		return $suppliers;
@@ -240,10 +240,16 @@ class SupplierCore extends ObjectModel
 			$order_by = pSQL($order_by[0]).'.`'.pSQL($order_by[1]).'`';
 		}
 		$alias = '';
-		if ($order_by == 'price')
+		if (in_array($order_by, array('price', 'date_add', 'date_upd')))
 			$alias = 'product_shop.';
 		elseif ($order_by == 'id_product')
 			$alias = 'p.';
+		elseif ($order_by == 'manufacturer_name')
+		{
+			$order_by = 'name';
+			$alias = 'm.';
+		}
+
 		$sql = 'SELECT p.*, product_shop.*, stock.out_of_stock,
 					IFNULL(stock.quantity, 0) as quantity,
 					pl.`description`,
@@ -253,7 +259,7 @@ class SupplierCore extends ObjectModel
 					pl.`meta_keywords`,
 					pl.`meta_title`,
 					pl.`name`,
-					image_shop.`id_image`,
+					MAX(image_shop.`id_image`) id_image,
 					il.`legend`,
 					s.`name` AS supplier_name,
 					DATEDIFF(p.`date_add`, DATE_SUB(NOW(), INTERVAL '.($nb_days_new_product).' DAY)) > 0 AS new,
@@ -281,7 +287,7 @@ class SupplierCore extends ObjectModel
 						($active_category ? ' INNER JOIN `'._DB_PREFIX_.'category` ca ON cp.`id_category` = ca.`id_category` AND ca.`active` = 1' : '').'
 						WHERE cg.`id_group` '.$sql_groups.'
 					)
-					AND ((image_shop.id_image IS NOT NULL OR i.id_image IS NULL) OR (image_shop.id_image IS NULL AND i.cover=1))
+				GROUP BY product_shop.id_product
 				ORDER BY '.$alias.pSQL($order_by).' '.pSQL($order_way).'
 				LIMIT '.(((int)$p - 1) * (int)$n).','.(int)$n;
 

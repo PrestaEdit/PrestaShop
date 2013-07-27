@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,8 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 7025 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -65,10 +64,10 @@ class HookCore extends ObjectModel
 		'primary' => 'id_hook',
 		'fields' => array(
 			'name' => 			array('type' => self::TYPE_STRING, 'validate' => 'isHookName', 'required' => true, 'size' => 64),
-			'title' => 			array('type' => self::TYPE_STRING),
-			'description' => 	array('type' => self::TYPE_HTML),
-			'position' => 		array('type' => self::TYPE_BOOL),
-			'live_edit' => 		array('type' => self::TYPE_BOOL),
+			'title' => 			array('type' => self::TYPE_STRING, 'validate' => 'isGenericName'),
+			'description' => 	array('type' => self::TYPE_HTML, 'validate' => 'isCleanHtml'),
+			'position' => 		array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
+			'live_edit' => 	array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
 		),
 	);
 
@@ -84,7 +83,7 @@ class HookCore extends ObjectModel
 
 	public function add($autodate = true, $null_values = false)
 	{
-		Cache::clean('hook_idbyname_'.$this->name);
+		Cache::clean('hook_idsbyname');
 		return parent::add($autodate, $null_values);
 	}
 
@@ -99,7 +98,7 @@ class HookCore extends ObjectModel
 		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
 			SELECT * FROM `'._DB_PREFIX_.'hook` h
 			'.($position ? 'WHERE h.`position` = 1' : '').'
-			ORDER BY `title`'
+			ORDER BY `name`'
 		);
 	}
 
@@ -114,17 +113,40 @@ class HookCore extends ObjectModel
 		if (!Validate::isHookName($hook_name))
 			return false;
 
-		$cache_id = 'hook_idbyname_'.$hook_name;
+		$cache_id = 'hook_idsbyname';
 		if (!Cache::isStored($cache_id))
 		{
-			$retro_hook_name = Hook::getRetroHookName($hook_name);
-			Cache::store($cache_id, Db::getInstance()->getValue('
-				SELECT `id_hook`
-				FROM `'._DB_PREFIX_.'hook`
-				WHERE `name` = \''.pSQL($hook_name).'\'
-					OR `name` = \''.pSQL($retro_hook_name).'\'
-			'));
+			// Get all hook ID by name and alias
+			$hook_ids = array();
+			$result = Db::getInstance()->ExecuteS('
+			SELECT `id_hook`, `name`
+			FROM `'._DB_PREFIX_.'hook`
+			UNION
+			SELECT `id_hook`, ha.`alias` as name
+			FROM `'._DB_PREFIX_.'hook_alias` ha
+			INNER JOIN `'._DB_PREFIX_.'hook` h ON ha.name = h.name');
+			foreach ($result as $row)
+				$hook_ids[$row['name']] = $row['id_hook'];
+			Cache::store($cache_id, $hook_ids);
 		}
+		else
+			$hook_ids = Cache::retrieve($cache_id);
+
+		return (isset($hook_ids[$hook_name]) ? $hook_ids[$hook_name] : false);
+	}
+
+	/**
+	 * Return hook ID from name
+	 */
+	public static function getNameById($hook_id)
+	{
+		$cache_id = 'hook_namebyid_'.$hook_id;
+		if (!Cache::isStored($cache_id))
+			Cache::store($cache_id, Db::getInstance()->getValue('
+				SELECT `name`
+				FROM `'._DB_PREFIX_.'hook`
+				WHERE `id_hook` = '.(int)$hook_id)
+			);
 
 		return Cache::retrieve($cache_id);
 	}
@@ -275,8 +297,9 @@ class HookCore extends ObjectModel
 			// For payment modules, we check that they are available in the contextual country
 			elseif ($frontend)
 			{
+				$sql->where(Module::getPaypalIgnore());
 				if (Validate::isLoadedObject($context->country))
-					$sql->where('(h.name = "displayPayment" AND (SELECT id_country FROM '._DB_PREFIX_.'module_country mc WHERE mc.id_module = m.id_module AND id_country = '.(int)$context->country->id.' LIMIT 1) = '.(int)$context->country->id.')');
+					$sql->where('(h.name = "displayPayment" AND (SELECT id_country FROM '._DB_PREFIX_.'module_country mc WHERE mc.id_module = m.id_module AND id_country = '.(int)$context->country->id.' AND id_shop = '.(int)$context->shop->id.' LIMIT 1) = '.(int)$context->country->id.')');
 				if (Validate::isLoadedObject($context->currency))
 					$sql->where('(h.name = "displayPayment" AND (SELECT id_currency FROM '._DB_PREFIX_.'module_currency mcr WHERE mcr.id_module = m.id_module AND id_currency IN ('.(int)$context->currency->id.', -2) LIMIT 1) IN ('.(int)$context->currency->id.', -2))');
 			}
@@ -299,16 +322,9 @@ class HookCore extends ObjectModel
 			// Get all available payment module
 			$payment_modules = array();
 
-			if (isset($context->shop->id))
-				foreach (Module::getPaymentModules() as $module)
-					$payment_modules[] = $module['name'];
-			
 			if ($results)
 				foreach ($results as $row)
 				{
-					if ($row['hook'] == 'displayPayment' && !in_array($row['module'], $payment_modules))
-						continue;
-
 					$row['hook'] = strtolower($row['hook']);
 					if (!isset($list[$row['hook']]))
 						$list[$row['hook']] = array();
@@ -358,7 +374,7 @@ class HookCore extends ObjectModel
 	 * @param int $id_module Execute hook for this module only
 	 * @return string modules output
 	 */
-	public static function exec($hook_name, $hook_args = array(), $id_module = null)
+	public static function exec($hook_name, $hook_args = array(), $id_module = null, $array_return = false, $check_exceptions = true)
 	{
 		// Check arguments validity
 		if (($id_module && !is_numeric($id_module)) || !Validate::isHookName($hook_name))
@@ -397,11 +413,24 @@ class HookCore extends ObjectModel
 				continue;
 
 			// Check permissions
-			$exceptions = $moduleInstance->getExceptions($array['id_hook']);
-			if (in_array(Dispatcher::getInstance()->getController(), $exceptions))
-				continue;
-			if (Validate::isLoadedObject($context->employee) && !$moduleInstance->getPermission('view', $context->employee))
-				continue;
+			if ($check_exceptions)
+			{
+				$exceptions = $moduleInstance->getExceptions($array['id_hook']);
+				$controller = Dispatcher::getInstance()->getController();
+								
+				if (in_array($controller, $exceptions))
+					continue;
+				
+				//retro compat of controller names
+				$matching_name = array(
+					'authentication' => 'auth',
+					'compare' => 'products-comparison',
+					);
+				if (isset($matching_name[$controller]) && in_array($matching_name[$controller], $exceptions))
+					continue;
+				if (Validate::isLoadedObject($context->employee) && !$moduleInstance->getPermission('view', $context->employee))
+					continue;
+			}
 
 			// Check which / if method is callable
 			$hook_callable = is_callable(array($moduleInstance, 'hook'.$hook_name));
@@ -416,19 +445,22 @@ class HookCore extends ObjectModel
 				else if ($hook_retro_callable)
 					$display = $moduleInstance->{'hook'.$retro_hook_name}($hook_args);
 				// Live edit
-				if ($array['live_edit'] && Tools::isSubmit('live_edit') && Tools::getValue('ad') && Tools::getValue('liveToken') == Tools::getAdminToken('AdminModulesPositions'.(int)Tab::getIdFromClassName('AdminModulesPositions').(int)Tools::getValue('id_employee')))
+				if (!$array_return && $array['live_edit'] && Tools::isSubmit('live_edit') && Tools::getValue('ad') && Tools::getValue('liveToken') == Tools::getAdminToken('AdminModulesPositions'.(int)Tab::getIdFromClassName('AdminModulesPositions').(int)Tools::getValue('id_employee')))
 				{
 					$live_edit = true;
 					$output .= self::wrapLiveEdit($display, $moduleInstance, $array['id_hook']);
 				}
+				else if ($array_return)
+					$output[] = $display;
 				else
 					$output .= $display;
 			}
 		}
-
-		// Return html string
-		return ($live_edit ? '<script type="text/javascript">hooks_list.push(\''.$hook_name.'\'); </script>
-				<div id="'.$hook_name.'" class="dndHook" style="min-height:50px">' : '').$output.($live_edit ? '</div>' : '');
+		if ($array_return)
+			return $output;
+		else
+			return ($live_edit ? '<script type="text/javascript">hooks_list.push(\''.$hook_name.'\'); </script>
+				<div id="'.$hook_name.'" class="dndHook" style="min-height:50px">' : '').$output.($live_edit ? '</div>' : '');// Return html string
 	}
 
 	public static function wrapLiveEdit($display, $moduleInstance, $id_hook)

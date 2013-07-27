@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,8 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 7040 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -45,13 +44,13 @@ class CookieCore
 	/** @var array cipher tool instance */
 	protected $_cipherTool;
 
-	/** @var array cipher tool initialization key */
-	protected $_key;
-
-	/** @var array cipher tool initilization vector */
-	protected $_iv;
-
 	protected $_modified = false;
+	
+	protected $_allow_writing;
+	
+	protected $_salt;
+	
+	protected $_standalone;
 
 	/**
 	 * Get data if the cookie exists and else initialize an new one
@@ -59,24 +58,32 @@ class CookieCore
 	 * @param $name Cookie name before encrypting
 	 * @param $path
 	 */
-	public function __construct($name, $path = '', $expire = null, $shared_urls = null)
+	public function __construct($name, $path = '', $expire = null, $shared_urls = null, $standalone = false)
 	{
 		$this->_content = array();
-		$this->_expire = isset($expire) ? (int)($expire) : (time() + 1728000);
-		$this->_name = md5(_PS_VERSION_.$name);
-		$this->_path = trim(Context::getContext()->shop->physical_uri.$path, '/\\').'/';
+		$this->_standalone = $standalone;
+		$this->_expire = is_null($expire) ? time() + 1728000 : (int)$expire;
+		$this->_name = md5(($this->_standalone ? '' : _PS_VERSION_).$name);
+		$this->_path = trim(($this->_standalone ? '' : Context::getContext()->shop->physical_uri).$path, '/\\').'/';
 		if ($this->_path{0} != '/') $this->_path = '/'.$this->_path;
 		$this->_path = rawurlencode($this->_path);
 		$this->_path = str_replace('%2F', '/', $this->_path);
 		$this->_path = str_replace('%7E', '~', $this->_path);
-		$this->_key = _COOKIE_KEY_;
-		$this->_iv = _COOKIE_IV_;
 		$this->_domain = $this->getDomain($shared_urls);
-		if (Configuration::get('PS_CIPHER_ALGORITHM'))
-			$this->_cipherTool = new Rijndael(_RIJNDAEL_KEY_, _RIJNDAEL_IV_);
+		$this->_allow_writing = true;
+		$this->_salt = $this->_standalone ? str_pad('', 8, md5('ps'.__FILE__)) : _COOKIE_IV_;
+		if ($this->_standalone)
+			$this->_cipherTool = new Blowfish(str_pad('', 56, md5('ps'.__FILE__)), str_pad('', 56, md5('iv'.__FILE__)));
+		elseif (!Configuration::get('PS_CIPHER_ALGORITHM'))
+			$this->_cipherTool = new Blowfish(_COOKIE_KEY_, _COOKIE_IV_);
 		else
-			$this->_cipherTool = new Blowfish($this->_key, $this->_iv);
+			$this->_cipherTool = new Rijndael(_RIJNDAEL_KEY_, _RIJNDAEL_IV_);
 		$this->update();
+	}
+
+	public function disallowWriting()
+	{
+		$this->_allow_writing = false;
 	}
 
 	protected function getDomain($shared_urls = null)
@@ -92,7 +99,7 @@ class CookieCore
 			return false;
 		if (!strstr(Tools::getHttpHost(false, false), '.'))
 			return false;
-		
+
 		$domain = false;
 		if ($shared_urls !== null)
 		{
@@ -100,7 +107,7 @@ class CookieCore
 			{
 				if ($shared_url != $out[4])
 					continue;
-				if (preg_match('/^(?:.*\.)?([^.]*(?:.{2,3})?\..{2,3})$/Ui', $shared_url, $res))
+				if (preg_match('/^(?:.*\.)?([^.]*(?:.{2,4})?\..{2,3})$/Ui', $shared_url, $res))
 				{
 					$domain = '.'.$res[1];
 					break;
@@ -263,7 +270,7 @@ class CookieCore
 			//printf("\$content = %s<br />", $content);
 			
 			/* Get cookie checksum */
-			$checksum = crc32($this->_iv.substr($content, 0, strrpos($content, '¤') + 2));
+			$checksum = crc32($this->_salt.substr($content, 0, strrpos($content, '¤') + 2));
 			//printf("\$checksum = %s<br />", $checksum);
 			
 			/* Unserialize cookie content */
@@ -290,7 +297,7 @@ class CookieCore
 			$this->_content['date_add'] = date('Y-m-d H:i:s');
 
 		//checks if the language exists, if not choose the default language
-		if (!Language::getLanguage((int)$this->id_lang))
+		if (!$this->_standalone && !Language::getLanguage((int)$this->id_lang))
 			$this->id_lang = Configuration::get('PS_LANG_DEFAULT');
 
 	}
@@ -326,7 +333,7 @@ class CookieCore
 	 */
 	public function write()
 	{
-		if (!$this->_modified || headers_sent())
+		if (!$this->_modified || headers_sent() || !$this->_allow_writing)
 			return;
 
 		$cookie = '';
@@ -337,7 +344,7 @@ class CookieCore
 			$cookie .= $key.'|'.$value.'¤';
 
 		/* Add checksum to cookie */
-		$cookie .= 'checksum|'.crc32($this->_iv.$cookie);
+		$cookie .= 'checksum|'.crc32($this->_salt.$cookie);
 		$this->_modified = false;
 		/* Cookies are encrypted for evident security reasons */
 		return $this->_setcookie($cookie);

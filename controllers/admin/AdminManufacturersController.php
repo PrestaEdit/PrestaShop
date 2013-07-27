@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,14 +19,14 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 8971 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
 class AdminManufacturersControllerCore extends AdminController
 {
+	public $bootstrap = true ;
 	/** @var array countries list */
 	protected $countries_array = array();
 
@@ -36,6 +36,7 @@ class AdminManufacturersControllerCore extends AdminController
 		$this->className = 'Manufacturer';
 	 	$this->lang = false;
 	 	$this->deleted = false;
+		$this->allow_export = true;
 
 	 	$this->bulk_actions = array('delete' => array('text' => $this->l('Delete selected'), 'confirm' => $this->l('Delete selected items?')));
 
@@ -49,14 +50,12 @@ class AdminManufacturersControllerCore extends AdminController
 		$this->fields_list = array(
 			'id_manufacturer' => array(
 				'title' => $this->l('ID'),
-				'width' => 25
 			),
 			'logo' => array(
 				'title' => $this->l('Logo'),
 				'image' => 'm',
 				'orderby' => false,
 				'search' => false,
-				'width' => 150,
 				'align' => 'center',
 			),
 			'name' => array(
@@ -65,19 +64,16 @@ class AdminManufacturersControllerCore extends AdminController
 			),
 			'addresses' => array(
 				'title' => $this->l('Addresses'),
-				'width' => 20,
 				'align' => 'center',
 				'havingFilter' => true
 			),
 			'products' => array(
-				'title' => $this->l('Products'),
+				'title' => $this->l('Products:'),
 				'havingFilter' => true,
-				'width' => 20,
 				'align' => 'center',
 			),
 			'active' => array(
 				'title' => $this->l('Enabled'),
-				'width' => 70,
 				'active' => 'status',
 				'type' => 'bool',
 				'align' => 'center',
@@ -148,34 +144,27 @@ class AdminManufacturersControllerCore extends AdminController
 
 		$this->fields_list = array(
 			'id_address' => array(
-				'title' => $this->l('ID'),
-				'width' => 25
+				'title' => $this->l('ID')
 			),
 			'manufacturer_name' => array(
-				'title' => $this->l('Manufacturer'),
-				'width' => 'auto'
+				'title' => $this->l('Manufacturer')
 			),
 			'firstname' => array(
-				'title' => $this->l('First name'),
-				'width' => 80
+				'title' => $this->l('First name')
 			),
 			'lastname' => array(
 				'title' => $this->l('Last name'),
-				'width' => 100,
 				'filter_key' => 'a!name'
 			),
 			'postcode' => array(
-				'title' => $this->l('Postal Code/Zip Code'),
-				'align' => 'right',
-				'width' => 50
+				'title' => $this->l('Zip Code/Postal Code'),
+				'align' => 'right'
 			),
 			'city' => array(
-				'title' => $this->l('City'),
-				'width' => 150
+				'title' => $this->l('City')
 			),
 			'country' => array(
 				'title' => $this->l('Country'),
-				'width' => 100,
 				'type' => 'select',
 				'list' => $this->countries_array,
 				'filter_key' => 'cl!id_country'
@@ -189,7 +178,7 @@ class AdminManufacturersControllerCore extends AdminController
 		$this->_join .= '
 			LEFT JOIN `'._DB_PREFIX_.'manufacturer` m
 				ON (a.`id_manufacturer` = m.`id_manufacturer`)';
-		$this->_where = 'AND a.`id_customer` = 0 AND a.`id_supplier` = 0 AND a.`id_warehouse` = 0';
+		$this->_where = 'AND a.`id_customer` = 0 AND a.`id_supplier` = 0 AND a.`id_warehouse` = 0 AND a.`deleted`=0';
 
 		$this->context->smarty->assign('title_list', $this->l('Manufacturers addresses:'));
 
@@ -233,15 +222,14 @@ class AdminManufacturersControllerCore extends AdminController
 		$this->fields_form = array(
 			'tinymce' => true,
 			'legend' => array(
-				'title' => $this->l('Manufacturers'),
-				'image' => '../img/admin/manufacturers.gif'
+				'title' => $this->l('Manufacturers:'),
+				'icon' => 'icon-certificate'
 			),
 			'input' => array(
 				array(
 					'type' => 'text',
 					'label' => $this->l('Name:'),
 					'name' => 'name',
-					'size' => 40,
 					'required' => true,
 					'hint' => $this->l('Invalid characters:').' <>;=#{}'
 				),
@@ -250,8 +238,6 @@ class AdminManufacturersControllerCore extends AdminController
 					'label' => $this->l('Short description:'),
 					'name' => 'short_description',
 					'lang' => true,
-					'cols' => 60,
-					'rows' => 10,
 					'class' => 'rte',
 					'hint' => $this->l('Invalid characters:').' <>;=#{}'
 				),
@@ -260,8 +246,6 @@ class AdminManufacturersControllerCore extends AdminController
 					'label' => $this->l('Description:'),
 					'name' => 'description',
 					'lang' => true,
-					'cols' => 60,
-					'rows' => 10,
 					'class' => 'rte',
 					'hint' => $this->l('Invalid characters:').' <>;=#{}'
 				),
@@ -270,7 +254,7 @@ class AdminManufacturersControllerCore extends AdminController
 					'label' => $this->l('Logo:'),
 					'name' => 'logo',
 					'display_image' => true,
-					'desc' => $this->l('Upload manufacturer logo from your computer')
+					'hint' => $this->l('Upload a manufacturer logo from your computer.')
 				),
 				array(
 					'type' => 'text',
@@ -291,11 +275,13 @@ class AdminManufacturersControllerCore extends AdminController
 					'label' => $this->l('Meta keywords:'),
 					'name' => 'meta_keywords',
 					'lang' => true,
-					'hint' => $this->l('Forbidden characters:').' <>;=#{}',
-					'desc' => $this->l('To add "tags" click in the field, write something, then press "Enter"')
+					'hint' => array(
+						$this->l('Forbidden characters:').' <>;=#{}',
+						$this->l('To add "tags," click inside the field, write something, and then press "Enter."')
+					)
 				),
 				array(
-					'type' => 'radio',
+					'type' => 'switch',
 					'label' => $this->l('Enable:'),
 					'name' => 'active',
 					'required' => false,
@@ -330,7 +316,7 @@ class AdminManufacturersControllerCore extends AdminController
 		}
 
 		$this->fields_form['submit'] = array(
-			'title' => $this->l('   Save   '),
+			'title' => $this->l('Save   '),
 			'class' => 'button'
 		);
 
@@ -372,7 +358,7 @@ class AdminManufacturersControllerCore extends AdminController
 		$form = array(
 			'legend' => array(
 				'title' => $this->l('Addresses'),
-				'image' => '../img/admin/contact.gif'
+				'icon' => 'icon-building'
 			)
 		);
 
@@ -406,11 +392,16 @@ class AdminManufacturersControllerCore extends AdminController
 			'type' => 'hidden',
 			'name' => 'alias',
 		);
+		
+		$form['input'][] = array(
+			'type' => 'hidden',
+			'name' => 'id_address',
+		);
+		
 		$form['input'][] = array(
 			'type' => 'text',
 			'label' => $this->l('Last name:'),
 			'name' => 'lastname',
-			'size' => 33,
 			'required' => true,
 			'hint' => $this->l('Invalid characters:').' 0-9!<>,;?=+()@#"�{}_$%:'
 		);
@@ -418,7 +409,6 @@ class AdminManufacturersControllerCore extends AdminController
 			'type' => 'text',
 			'label' => $this->l('First name:'),
 			'name' => 'firstname',
-			'size' => 33,
 			'required' => true,
 			'hint' => $this->l('Invalid characters:').' 0-9!<>,;?=+()@#"�{}_$%:'
 		);
@@ -426,28 +416,25 @@ class AdminManufacturersControllerCore extends AdminController
 			'type' => 'text',
 			'label' => $this->l('Address:'),
 			'name' => 'address1',
-			'size' => 33,
 			'required' => true,
 		);
 		$form['input'][] = array(
 			'type' => 'text',
 			'label' => $this->l('Address (2):'),
 			'name' => 'address2',
-			'size' => 33,
 			'required' => false,
 		);
 		$form['input'][] = array(
 			'type' => 'text',
-			'label' => $this->l('Postcode / Zip Code:'),
+			'label' => $this->l('Zip Code/Postal Code'),
 			'name' => 'postcode',
-			'size' => 33,
+			'required' => true,
 			'required' => false,
 		);
 		$form['input'][] = array(
 			'type' => 'text',
 			'label' => $this->l('City:'),
 			'name' => 'city',
-			'size' => 33,
 			'required' => true,
 		);
 		$form['input'][] = array(
@@ -477,34 +464,30 @@ class AdminManufacturersControllerCore extends AdminController
 			'type' => 'text',
 			'label' => $this->l('Home phone:'),
 			'name' => 'phone',
-			'size' => 33,
 			'required' => false,
 		);
 		$form['input'][] = array(
 			'type' => 'text',
 			'label' => $this->l('Mobile phone:'),
 			'name' => 'phone_mobile',
-			'size' => 33,
 			'required' => false,
 		);
 		$form['input'][] = array(
 			'type' => 'textarea',
 			'label' => $this->l('Other:'),
 			'name' => 'other',
-			'cols' => 36,
-			'rows' => 4,
 			'required' => false,
 			'hint' => $this->l('Forbidden characters:').' <>;=#{}'
 		);
 		$form['submit'] = array(
-			'title' => $this->l('   Save   '),
+			'title' => $this->l('Save   '),
 			'class' => 'button'
 		);
 
 		$this->fields_value = array(
 			'name' => Manufacturer::getNameById($address->id_manufacturer),
 			'alias' => 'manufacturer',
-			'id_country' => Configuration::get('PS_COUNTRY_DEFAULT')
+			'id_country' => $address->id_country
 		);
 
 		$this->initToolbar();
@@ -558,6 +541,10 @@ class AdminManufacturersControllerCore extends AdminController
 
 			default:
 				parent::initToolbar();
+				$this->toolbar_btn['import'] = array(
+					'href' => $this->context->link->getAdminLink('AdminImport', true).'&import_type='.$this->table,
+					'desc' => $this->l('Import')
+				);
 		}
 	}
 
@@ -565,7 +552,12 @@ class AdminManufacturersControllerCore extends AdminController
 	{
 		if (!($manufacturer = $this->loadObject()))
 			return;
-
+		
+		$this->toolbar_btn['new'] = array(
+					'href' => $this->context->link->getAdminLink('AdminManufacturers').'&addaddress=1&id_manufacturer='.(int)$manufacturer->id,
+					'desc' => $this->l('Add address')
+				);
+		
 		$addresses = $manufacturer->getAddresses($this->context->language->id);
 
 		$products = $manufacturer->getProductsLite($this->context->language->id);
@@ -655,6 +647,8 @@ class AdminManufacturersControllerCore extends AdminController
 
 		if (Tools::isSubmit('editaddresses'))
 			$this->display = 'editaddresses';
+		else if (Tools::isSubmit('updateaddress'))
+			$this->display = 'editaddresses';
 		else if (Tools::isSubmit('addaddress'))
 			$this->display = 'addaddress';
 		else if (Tools::isSubmit('submitAddaddress'))
@@ -698,10 +692,13 @@ class AdminManufacturersControllerCore extends AdminController
 		}
 
 		if (!$res)
-			$this->errors[] = Tools::displayError('Unable to resize one or more pictures');
+			$this->errors[] = Tools::displayError('Unable to resize one or more of your pictures.');
 
 		return $res;
 	}
+	
+	protected function beforeDelete($object)
+	{
+		return true;
+	}
 }
-
-

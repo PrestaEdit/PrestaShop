@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,8 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision$
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -123,15 +122,22 @@ class HTMLTemplateSupplyOrderFormCore extends HTMLTemplate
 	public function getHeader()
 	{
 		$shop_name = Configuration::get('PS_SHOP_NAME');
-
+		$path_logo = $this->getLogo();
+		$width = $height = 0;
+		
+		if (!empty($path_logo))
+			list($width, $height) = getimagesize($path_logo);
+		
 		$this->smarty->assign(array(
-			'logo_path' => $this->getLogo(),
+			'logo_path' => $path_logo,
 			'img_ps_dir' => 'http://'.Tools::getMediaServer(_PS_IMG_)._PS_IMG_,
 			'img_update_time' => Configuration::get('PS_IMG_UPDATE_TIME'),
 			'title' => $this->title,
 			'reference' => $this->supply_order->reference,
 			'date' => $this->date,
-			'shop_name' => $shop_name
+			'shop_name' => $shop_name,
+			'width_logo' => $width,
+			'height_logo' => $height
 		));
 
 		return $this->smarty->fetch($this->getTemplate('supply-order-header'));

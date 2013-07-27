@@ -19,7 +19,6 @@
 *
 *  @author PrestaShop SA <contact@prestashop.com>
 *  @copyright  2007-2011 PrestaShop SA
-*  @version  Release: $Revision: 6594 $
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
@@ -36,11 +35,11 @@
 				<div data-role="footer" data-theme="a" id="bar_footer">
 					<div id="link_bar_footer" class="ui-grid-a">
 						<div class="ui-block-a">
-							<a href="{$link->getPageLink('index', true)}" data-ajax="false">{$PS_SHOP_NAME}</a>
+							<a href="{$link->getPageLink('index', true)|escape:'html'}" data-ajax="false">{$PS_SHOP_NAME}</a>
 						</div>
 						{if $conditions}
 						<div class="ui-block-b">
-							<a href="{$link->getCMSLink($id_cgv)}" data-ajax="false">{l s='Terms of service'}</a>
+							<a href="{$link->getCMSLink($id_cgv)|escape:'html'}" data-ajax="false">{l s='Terms of service'}</a>
 						</div>
 						{/if}
 					</div>

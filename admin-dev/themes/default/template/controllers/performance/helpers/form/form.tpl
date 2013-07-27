@@ -1,5 +1,5 @@
 {*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,8 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 9795 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
@@ -28,7 +27,7 @@
 {block name="label"}
 	{if $input.type == 'text' && $input.name == 'ps_cache_fs_directory_depth'}
 		<div id="directory_depth">
-			<div class="warn">{l s='The CacheFS system should be used only when the infrastructure contains only one front-end server. If you are not sure, ask your hosting company.'}</div>
+			<div class="alert alert-block">{l s='The CacheFS system should be used only when the infrastructure contains one front-end server. If you are not sure, ask your hosting company.'}</div>
 	{else}
 		{$smarty.block.parent}
 	{/if}
@@ -36,7 +35,7 @@
 
 {block name="input"}
 	{if $input.type == 'radio' && $input.name == 'combination' && $input.disabled}
-		<div class="warn">
+		<div class="alert alert-block">
 			{l s='This feature cannot be disabled because it is currently in use.'}
 		</div>
 	{/if}
@@ -193,10 +192,6 @@
 
 		$('input[name="combination"], input[name="feature"]').change(function(){
 			$('#features_detachables_up').val('true');
-		});
-
-		$('input[name="PS_CSS_THEME_CACHE"], input[name="PS_JS_THEME_CACHE"], input[name="PS_HTML_THEME_COMPRESSION"], input[name="PS_JS_HTML_THEME_COMPRESSION"], input[name="PS_HIGH_HTML_THEME_COMPRESSION"]').change(function(){
-			$('#ccc_up').val(1);
 		});
 
 		$('input[name="_MEDIA_SERVER_1_"], input[name="_MEDIA_SERVER_2_"], input[name="_MEDIA_SERVER_3_"]').change(function(){

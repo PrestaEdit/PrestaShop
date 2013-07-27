@@ -17,8 +17,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision$
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -64,9 +63,9 @@ product_tabs['Combinations'] = new function(){
 					self.removeButtonCombination('update');
 					$.scrollTo('#add_new_combination', 1200, { offset: -100 });
 					var wholesale_price = Math.abs(data[0]['wholesale_price']);
-					var price = Math.abs(data[0]['price']);
-					var weight = Math.abs(data[0]['weight']);
-					var unit_impact = Math.abs(data[0]['unit_price_impact']);
+					var price = data[0]['price'];
+					var weight = data[0]['weight'];
+					var unit_impact = data[0]['unit_price_impact'];
 					var reference = data[0]['reference'];
 					var ean = data[0]['ean13'];
 					var quantity = data[0]['quantity'];
@@ -192,11 +191,11 @@ product_tabs['Combinations'] = new function(){
 	};
 
 	this.removeButtonCombination = function(item)
-	{
+	{		
 		$('#add_new_combination').show();
 		$('.process-icon-newCombination').removeClass('toolbar-new');
 		$('.process-icon-newCombination').addClass('toolbar-cancel');
-		$('#desc-product-newCombination div').html($('#ResetBtn').val());
+		$('#desc-product-newCombination div').html(msg_cancel_combination);
 		$('id_product_attribute').val(0);
 		self.init_elems();
 	};
@@ -445,7 +444,7 @@ function handleSaveButtons(e)
 			{
 				if (do_not_save == false)
 				{
-					$(".leadin").append('<div id="disableSaveMessage" class="warn"></div>');
+					$(".leadin").append('<div id="disableSaveMessage" class="alert alert-danger"></div>');
 					warnDiv = $("#disableSaveMessage");
 					do_not_save = true;
 				}
@@ -761,12 +760,37 @@ product_tabs['Attachments'] = new function(){
 	};
 }
 
+product_tabs['Shipping'] = new function(){
+	var self = this;
+
+	this.bindCarriersEvents = function (){
+		$("#addCarrier").live('click', function() {
+			$('#availableCarriers option:selected').each( function() {
+	                $('#selectedCarriers').append("<option value='"+$(this).val()+"'>"+$(this).text()+"</option>");
+	            $(this).remove();
+	        });
+	        $('#selectedCarriers option').prop('selected', true);
+		});
+
+		$("#removeCarrier").live('click', function() {
+			$('#selectedCarriers option:selected').each( function() {
+	            $('#availableCarriers').append("<option value='"+$(this).val()+"'>"+$(this).text()+"</option>");
+	            $(this).remove();
+	        });
+			$('#selectedCarriers option').prop('selected', true);
+		});
+	};
+
+	this.onReady = function(){
+		self.bindCarriersEvents();
+	};
+}
+
 product_tabs['Informations'] = new function(){
 	var self = this;
 	this.bindAvailableForOrder = function (){
-		$("#available_for_order").click(function(){
-
-
+		$("#available_for_order").click(function()
+		{
 			if ($(this).is(':checked') || ($('input[name=\'multishop_check[show_price]\']').lenght && !$('input[name=\'multishop_check[show_price]\']').prop('checked')))
 			{
 				$('#show_price').attr('checked', true);
@@ -777,6 +801,37 @@ product_tabs['Informations'] = new function(){
 				$('#show_price').attr('disabled', false);
 			}
 		});
+				
+		if ($('#active_on').prop('checked'))
+		{
+			showRedirectProductOptions(false);
+			showRedirectProductSelectOptions(false);
+		}
+		else
+			showRedirectProductOptions(true);
+			
+		$('#redirect_type').change(function () {
+			redirectSelectChange();
+		});
+		
+		$('#related_product_autocomplete_input')
+			.autocomplete('ajax_products_list.php?excludeIds='+id_product, {
+				minChars: 1,
+				autoFill: true,
+				max:20,
+				matchContains: true,
+				mustMatch:true,
+				scroll:false,
+				cacheLength:0,
+				formatItem: function(item) {
+						return item[0]+' - '+item[1];
+				}
+			}).result(function(e, i){  
+					if(i != undefined)
+						addRelatedProduct(i[1], i[0]);
+					$(this).val('');
+		       });
+		 addRelatedProduct(id_product_redirected, product_name_redirected);
 	};
 
 	this.bindTagImage = function (){
@@ -827,8 +882,8 @@ product_tabs['Informations'] = new function(){
 		$('input[name="type_product"]').live('click', function()
 		{
 			// Reset settings
-			$('li.tab-row a[id*="Pack"]').hide();
-			$('li.tab-row a[id*="VirtualProduct"]').hide();
+			$('a[id*="Pack"]').hide();
+			$('a[id*="VirtualProduct"]').hide();
 			$('div.ppack').hide();
 			$('div.is_virtual_good').hide();
 			$('#is_virtual').val(0);
@@ -843,7 +898,7 @@ product_tabs['Informations'] = new function(){
 			if (product_type == product_type_pack)
 			{
 				//when you change the type of the product, directly go to the pack tab
-				$('li.tab-row a[id*="Pack"]').show().click();
+				$('a[id*="Pack"]').show().click();
 				$('#ppack').val(1).attr('checked', true).attr('disabled', true);
 				$('#ppackdiv').show();
 				// If the pack tab has not finished loaded the changes will be made when the loading event is triggered
@@ -855,7 +910,7 @@ product_tabs['Informations'] = new function(){
 					$('.stockForVirtualProduct').show();
 				});
 
-				$('li.tab-row a[id*="Shipping"]').show();
+				$('a[id*="Shipping"]').show();
 				$('#condition').removeAttr('disabled');
 				$('#condition option[value=new]').removeAttr('selected');
 				$('.stockForVirtualProduct').show();
@@ -870,7 +925,7 @@ product_tabs['Informations'] = new function(){
 				}
 				else
 				{
-					$('li.tab-row a[id*="VirtualProduct"]').show().click();
+					$('a[id*="VirtualProduct"]').show().click();
 					$('#is_virtual').val(1);
 
 					tabs_manager.onLoad('VirtualProduct', function(){
@@ -882,7 +937,7 @@ product_tabs['Informations'] = new function(){
 						$('.stockForVirtualProduct').hide();
 					});
 
-					$('li.tab-row a[id*="Shipping"]').hide();
+					$('a[id*="Shipping"]').hide();
 
 					tabs_manager.onLoad('Informations', function(){
 						$('#condition').attr('disabled', true);
@@ -894,7 +949,7 @@ product_tabs['Informations'] = new function(){
 			else
 			{
 				// 3rd case : product_type is PTYPE_SIMPLE (0)
-				$('li.tab-row a[id*="Shipping"]').show();
+				$('a[id*="Shipping"]').show();
 				$('#condition').removeAttr('disabled');
 				$('#condition option[value=new]').removeAttr('selected');
 				$('.stockForVirtualProduct').show();
@@ -962,7 +1017,8 @@ product_tabs['Pack'] = new function(){
 			},
 			extraParams: {
 				excludeIds : getSelectedIds(),
-				excludeVirtuals : 1
+				excludeVirtuals : 1,
+				exclude_packs: 1
 			}
 		}).result(function(event, item){
 			$('#curPackItemId').val(item[1]);
@@ -989,8 +1045,8 @@ product_tabs['Pack'] = new function(){
 			var lineDisplay = curPackItemQty+ 'x ' +curPackItemName;
 
 			var divContent = $('#divPackItems').html();
-			divContent += lineDisplay;
-			divContent += '<span class="delPackItem" name="' + curPackItemId + '" style="cursor: pointer;"><img src="../img/admin/delete.gif" /></span><br />';
+			divContent += '<li><button class="btn btn-default delPackItem" name="' + curPackItemId + '" ><i class="icon-trash"></i></button>'+
+			lineDisplay+'</li>';
 
 			// QTYxID-QTYxID
 			// @todo : it should be better to create input for each items and each qty
@@ -1041,7 +1097,7 @@ product_tabs['Pack'] = new function(){
 					{
 						input.value += inputCut[i] + '-';
 						name.value += nameCut[i] + '¤';
-						div.innerHTML += nameCut[i] + ' <span class="delPackItem" name="' + inputQty[1] + '" style="cursor: pointer;"><img src="../img/admin/delete.gif" /></span><br />';
+						div.innerHTML += nameCut[i] + '<li><button class="btn btn-default delPackItem" name="' + inputQty[1] + '"><i class="icon-trash"></i></button></li>';
 					}
 				}
 
@@ -1197,6 +1253,8 @@ product_tabs['Quantities'] = new function(){
 			self.refreshQtyAvailabilityForm();
 			self.ajaxCall({actionQty: 'out_of_stock', value: $(this).val()});
 		});
+		if (display_multishop_checkboxes)
+			ProductMultishop.checkAllQuantities();
 
 		self.refreshQtyAvailabilityForm();
 	};
@@ -1206,7 +1264,7 @@ product_tabs['Suppliers'] = new function(){
 	var self = this;
 
 	this.manageDefaultSupplier = function() {
-		var default_is_ok = false;
+		var default_is_set = false;
 		var availables_radio_buttons = [];
 		var radio_buttons = $('input[name="default_supplier"]');
 
@@ -1219,27 +1277,25 @@ product_tabs['Suppliers'] = new function(){
 				if (item.is(':checked'))
 				{
 					item.removeAttr("checked");
-					default_is_ok = false;
 				}
 			}
-			else
+
+			if (item.is(':checked'))
 			{
-				availables_radio_buttons.push(item);
+				default_is_set = true;
 			}
 		}
 
-		if (default_is_ok == false)
+		if (!default_is_set)
 		{
-			for (i=0; i<availables_radio_buttons.length; i++)
+			for (i=0; i<radio_buttons.length; i++)
 			{
-				var item = $(availables_radio_buttons[i]);
+				var item = $(radio_buttons[i]);
 
 				if (item.is(':disabled') == false)
 				{
 					item.attr("checked", true);
-					default_is_ok = true;
 				}
-				break;
 			}
 		}
 	};
@@ -1248,6 +1304,7 @@ product_tabs['Suppliers'] = new function(){
 		$('.supplierCheckBox').live('click', function() {
 			var check = $(this);
 			var checkbox = $('#default_supplier_'+check.val());
+
 			if (this.checked)
 			{
 				// enable default radio button associated
@@ -1258,6 +1315,7 @@ product_tabs['Suppliers'] = new function(){
 				// disable default radio button associated
 				checkbox.attr('disabled', true);
 			}
+
 			//manage default supplier check
 			self.manageDefaultSupplier();
 		});
@@ -1267,14 +1325,14 @@ product_tabs['Suppliers'] = new function(){
 			$('#suppliers_accordion').accordion();
 			// If one second was not enough to display page, another resize is needed
 			setTimeout(function() {
-				$('#suppliers_accordion').accordion('resize');
+				$('#suppliers_accordion').accordion({ heightStyle: "fill" });
 			}, 3000);
 		}, 1000);
 
 		// Resize the accordion once the page is visible because of the bug with accordions initialized
 		// inside a display:none block not having the correct size.
 		$('#suppliers_accordion').parents('.product-tab-content').bind('displayed', function(){
-			$('#suppliers_accordion').accordion("resize");
+			$('#suppliers_accordion').accordion({ heightStyle: "fill" });
 		});
 	};
 }
@@ -1324,23 +1382,27 @@ product_tabs['VirtualProduct'] = new function(){
 		// Bind file deletion
 		$(('#product-tab-content-VirtualProduct')).delegate('a.delete_virtual_product', 'click', function(e){
 			e.preventDefault();
-			if (!$('#virtual_product_id').val())
+			if (confirm(delete_this_file))
 			{
-				$('#upload_input').show();
-				$('#virtual_product_name').val('');
-				$('#virtual_product_file').val('');
-				$('#upload-confirmation').hide().find('span').remove();
-			}
-			else
-			{
-				var object = this;
-				ajaxAction(this.href, 'deleteVirtualProduct', function(){
-					$(object).closest('tr').remove();
+				if (!$('#virtual_product_id').val())
+				{
 					$('#upload_input').show();
 					$('#virtual_product_name').val('');
 					$('#virtual_product_file').val('');
-					$('#virtual_product_id').remove();
-				});
+					$('#upload-confirmation').hide().find('span').remove();
+				}
+				else
+				{
+					var object = this;
+					ajaxAction(this.href, 'deleteVirtualProduct', function(){
+						$(object).closest('tr').remove();
+						$('#upload_input').show();
+						$('#virtual_product_name').val('');
+						$('#virtual_product_file').val('');
+						$('#virtual_product_id').remove();
+					});
+				}
+
 			}
 		});
 	}
@@ -1378,7 +1440,7 @@ product_tabs['Warehouses'] = new function(){
 		// Resize the accordion once the page is visible because of the bug with accordions initialized
 		// inside a display:none block not having the correct size.
 		$('#warehouse_accordion').parents('.product-tab-content').bind('displayed', function(){
-			$('#warehouse_accordion').accordion("resize");
+			$('#warehouse_accordion').accordion("refresh");
 		});
 	};
 }
@@ -1543,6 +1605,15 @@ var ProductMultishop = new function()
 			ProductMultishop.checkField($('input[name=\'multishop_check[meta_description]['+v.id_lang+']\']').prop('checked'), 'meta_description_'+v.id_lang);
 			ProductMultishop.checkField($('input[name=\'multishop_check[meta_keywords]['+v.id_lang+']\']').prop('checked'), 'meta_keywords_'+v.id_lang);
 			ProductMultishop.checkField($('input[name=\'multishop_check[link_rewrite]['+v.id_lang+']\']').prop('checked'), 'link_rewrite_'+v.id_lang);
+		});
+	};
+	
+	this.checkAllQuantities = function()
+	{
+		$.each(languages, function(k, v)
+		{
+			ProductMultishop.checkField($('input[name=\'multishop_check[available_later]['+v.id_lang+']\']').prop('checked'), 'available_later_'+v.id_lang);
+			ProductMultishop.checkField($('input[name=\'multishop_check[available_now]['+v.id_lang+']\']').prop('checked'), 'available_now_'+v.id_lang);
 		});
 	};
 

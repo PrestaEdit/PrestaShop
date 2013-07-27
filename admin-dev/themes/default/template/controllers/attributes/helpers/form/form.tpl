@@ -1,5 +1,5 @@
 {*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,8 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 8971 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
@@ -28,18 +27,18 @@
 
 {block name="label"}
 	{if $input.type == 'color'}
-		<div id="colorAttributeProperties" style="display:{if $colorAttributeProperties}block{else}none{/if}";>
+		<div id="colorAttributeProperties" "{if !$colorAttributeProperties}style="display:none"{/if};">
 	{/if}
 	{$smarty.block.parent}
 {/block}
 
 {block name="field"}
 	{if $input.name == 'current_texture'}
-		<div class="margin-form">
+		<div class="col-lg-9">
 			{if isset($imageTextureExists) && $imageTextureExists}
 				<img src="{$imageTexture}" alt="{l s='Texture'}" />
 			{else}
-				{l s='None'}
+				<p>{l s='None'}</p>
 			{/if}
 		</div>
 	{else}

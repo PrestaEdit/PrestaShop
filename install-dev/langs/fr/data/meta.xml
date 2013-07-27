@@ -54,7 +54,7 @@
     <keywords>plan, site</keywords>
     <url_rewrite>plan-du-site</url_rewrite>
   </meta>
-  <meta id="supply" id_shop="1">
+  <meta id="supplier" id_shop="1">
     <title>Fournisseurs</title>
     <description>Liste de nos fournisseurs</description>
     <keywords>fournisseurs</keywords>
@@ -149,5 +149,11 @@
     <description/>
     <keywords/>
     <url_rewrite>suivi-commande-invite</url_rewrite>
+  </meta>
+  <meta id="order-confirmation" id_shop="1">
+    <title>Confirmation de commande</title>
+    <description/>
+    <keywords/>
+    <url_rewrite>confirmation-commande</url_rewrite>
   </meta>
 </entity_meta>

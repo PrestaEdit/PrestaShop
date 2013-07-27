@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop 
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,8 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 6844 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -41,7 +40,7 @@ class BlockPermanentLinks extends Module
 		parent::__construct();
 		
 		$this->displayName = $this->l('Permanent links block');
-		$this->description = $this->l('Adds a block that displays permanent links such as sitemap, contact, etc.');
+		$this->description = $this->l('Adds a block that displays permanent links such as sitemap, contact, etc...');
 	}
 
 	public function install()
@@ -57,7 +56,7 @@ class BlockPermanentLinks extends Module
 	*/
 	public function hookTop($params)
 	{
-		return $this->display(__FILE__, 'blockpermanentlinks-header.tpl');
+		return $this->display(__FILE__, 'blockpermanentlinks-header.tpl', $this->getCacheId('blockpermanentlinks-header'));
 	}
 
 	/**
@@ -68,7 +67,7 @@ class BlockPermanentLinks extends Module
 	*/
 	public function hookLeftColumn($params)
 	{
-		return $this->display(__FILE__, 'blockpermanentlinks.tpl');
+		return $this->display(__FILE__, 'blockpermanentlinks.tpl', $this->getCacheId());
 	}
 
 	public function hookRightColumn($params)
@@ -78,7 +77,7 @@ class BlockPermanentLinks extends Module
 
 	public function hookFooter($params)
 	{
-		return $this->display(__FILE__, 'blockpermanentlinks-footer.tpl');
+		return $this->display(__FILE__, 'blockpermanentlinks-footer.tpl', $this->getCacheId('blockpermanentlinks-footer'));
 	}
 
 	public function hookHeader($params)

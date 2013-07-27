@@ -19,12 +19,11 @@
 *
 *  @author PrestaShop SA <contact@prestashop.com>
 *  @copyright  2007-2011 PrestaShop SA
-*  @version  Release: $Revision: 6594 $
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 <!DOCTYPE html>
-<html>
+<html lang="{$lang_iso}">
 	<head>
 		<title>{$meta_title|escape:'htmlall':'UTF-8'}</title>
 		{*<meta name="viewport" content="width=device-width, initial-scale=1">*}
@@ -70,12 +69,12 @@
 				<div class="ui-block-b">
 					<div id="block_cart" class="clearfix">
 						{if !$PS_CATALOG_MODE}
-						<a href="{$link->getPageLink('order-opc', true)}" class="link_cart" data-ajax="false">{l s='Cart'}</a>
+						<a href="{$link->getPageLink('order-opc', true)|escape:'html'}" class="link_cart" data-ajax="false">{l s='Cart'}</a>
 						{/if}
 						{if $logged}
-							<a href="{$link->getPageLink('my-account', true)}" class="link_account" data-ajax="false">{l s='My account'}</a>
+							<a href="{$link->getPageLink('my-account', true)|escape:'html'}" class="link_account" data-ajax="false">{l s='My account'}</a>
 						{else}
-							<a href="{$link->getPageLink('authentication', true)}" class="link_account" data-ajax="false">{l s='Log in'}</a>
+							<a href="{$link->getPageLink('authentication', true)|escape:'html'}" class="link_account" data-ajax="false">{l s='Authentication'}</a>
 						{/if}
 					</div>
 					{hook h="displayMobileTop"}

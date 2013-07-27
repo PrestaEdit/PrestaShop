@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,8 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 8971 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -29,6 +28,7 @@ class AdminOrderMessageControllerCore extends AdminController
 {
 	public function __construct()
 	{
+		$this->bootstrap = true;
 	 	$this->table = 'order_message';
 		$this->className = 'OrderMessage';
 	 	$this->lang = true;
@@ -46,16 +46,13 @@ class AdminOrderMessageControllerCore extends AdminController
 		$this->fields_list = array(
 			'id_order_message' => array(
 				'title' => $this->l('ID'),
-				'align' => 'center',
-				'width' => 25
+				'align' => 'center'
 			),
 			'name' => array(
-				'title' => $this->l('Name'),
-				'width' => 140
+				'title' => $this->l('Name')
 			),
 			'message' => array(
 				'title' => $this->l('Message'),
-				'width' => 600,
 				'maxlength' => 300
 			)
 		);
@@ -63,7 +60,7 @@ class AdminOrderMessageControllerCore extends AdminController
 		$this->fields_form = array(
 			'legend' => array(
 				'title' => $this->l('Order messages'),
-				'image' => '../img/admin/email.gif'
+				'icon' => 'icon-mail'
 			),
 			'input' => array(
 				array(
@@ -79,8 +76,6 @@ class AdminOrderMessageControllerCore extends AdminController
 					'lang' => true,
 					'label' => $this->l('Message:'),
 					'name' => 'message',
-					'cols' => 50,
-					'rows' => 15,
 					'required' => true
 				)
 			),

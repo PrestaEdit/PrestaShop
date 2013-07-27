@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,8 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 6844 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -129,7 +128,7 @@ class CarrierCore extends ObjectModel
 			'max_width' => 				array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'),
 			'max_height' => 			array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'),
 			'max_depth' => 				array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'),
-			'max_weight' => 			array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'),
+			'max_weight' => 			array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat'),
 			'grade' => 					array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt', 'size' => 1),
 			'external_module_name' => 	array('type' => self::TYPE_STRING, 'size' => 64),
 			'is_module' => 				array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
@@ -468,7 +467,9 @@ class CarrierCore extends ObjectModel
 		ORDER BY s.`name` ASC');
 
 		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
-			SELECT cl.*,c.*, cl.`name` AS country, zz.`name` AS zone FROM `'._DB_PREFIX_.'country` c
+			SELECT cl.*,c.*, cl.`name` AS country, zz.`name` AS zone 
+			FROM `'._DB_PREFIX_.'country` c'.
+			Shop::addSqlAssociation('country', 'c').'
 			LEFT JOIN `'._DB_PREFIX_.'country_lang` cl ON (c.`id_country` = cl.`id_country` AND cl.`id_lang` = '.(int)$id_lang.')
 			INNER JOIN (`'._DB_PREFIX_.'carrier_zone` cz INNER JOIN `'._DB_PREFIX_.'carrier` cr ON ( cr.id_carrier = cz.id_carrier AND cr.deleted = 0 '.
 			($active_carriers ? 'AND cr.active = 1) ' : ') ').'
@@ -483,7 +484,8 @@ class CarrierCore extends ObjectModel
 			$countries[$country['id_country']] = $country;
 		foreach ($states as &$state)
 			if (isset($countries[$state['id_country']])) /* Does not keep the state if its country has been disabled and not selected */
-				$countries[$state['id_country']]['states'][] = $state;
+				if ($state['active'] == 1)
+					$countries[$state['id_country']]['states'][] = $state;
 
 		return $countries;
 	}
@@ -565,8 +567,8 @@ class CarrierCore extends ObjectModel
 			}
 
 			$row['name'] = (strval($row['name']) != '0' ? $row['name'] : Configuration::get('PS_SHOP_NAME'));
-			$row['price'] = ($shipping_method == Carrier::SHIPPING_METHOD_FREE ? 0 : $cart->getPackageShippingCost((int)$row['id_carrier']));
-			$row['price_tax_exc'] = ($shipping_method == Carrier::SHIPPING_METHOD_FREE ? 0 : $cart->getPackageShippingCost((int)$row['id_carrier'], false));
+			$row['price'] = (($shipping_method == Carrier::SHIPPING_METHOD_FREE) ? 0 : $cart->getPackageShippingCost((int)$row['id_carrier'], true, null, null, $id_zone));
+			$row['price_tax_exc'] = (($shipping_method == Carrier::SHIPPING_METHOD_FREE) ? 0 : $cart->getPackageShippingCost((int)$row['id_carrier'], false, null, null, $id_zone));
 			$row['img'] = file_exists(_PS_SHIP_IMG_DIR_.(int)$row['id_carrier']).'.jpg' ? _THEME_SHIP_DIR_.(int)$row['id_carrier'].'.jpg' : '';
 
 			// If price is false, then the carrier is unavailable (carrier module)
@@ -843,13 +845,14 @@ class CarrierCore extends ObjectModel
 			SET `id_reference` = '.(int)$id_reference.'
 			WHERE `id_carrier` = '.(int)$this->id);
 
+		$this->id_reference = (int)$id_reference;
+
 		// Copy tax rules group
 		Db::getInstance()->execute('INSERT INTO `'._DB_PREFIX_.'carrier_tax_rules_group_shop` (`id_carrier`, `id_tax_rules_group`, `id_shop`)
 												(SELECT '.(int)$this->id.', `id_tax_rules_group`, `id_shop`
 													FROM `'._DB_PREFIX_.'carrier_tax_rules_group_shop`
 													WHERE `id_carrier`='.(int)$old_id.')');
-		// Update warehouse_carriers
-		Db::getInstance()->execute('UPDATE '._DB_PREFIX_.'warehouse_carrier SET id_carrier='.(int)$this->id.' WHERE id_carrier='.(int)$old_id);
+
 	}
 
 	/**
@@ -1160,22 +1163,17 @@ class CarrierCore extends ObjectModel
 		$query->where('pc.id_product = '.(int)$product->id);
 		$query->where('pc.id_shop = '.(int)$id_shop);
 
-		$carriers = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
-
-		if (!empty($carriers))
-		{
+		$carriers_for_product = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+		$carrier_list = array();
+		if (!empty($carriers_for_product))
+		{				
 			//the product is linked with carriers
-			$carrier_list = array();
-			foreach ($carriers as $carrier) //check if the linked carriers are available in current zone
+			foreach ($carriers_for_product as $carrier) //check if the linked carriers are available in current zone
 				if (Carrier::checkCarrierZone($carrier['id_carrier'], $id_zone))
 					$carrier_list[] = $carrier['id_carrier'];
-			if (!empty($carrier_list))
-				return $carrier_list;
-			else
+			if (empty($carrier_list))
 				return array();//no linked carrier are available for this zone
 		}
-
-		$carrier_list = array();
 
 		// The product is not dirrectly linked with a carrier
 		// Get all the carriers linked to a warehouse
@@ -1188,13 +1186,17 @@ class CarrierCore extends ObjectModel
 		$available_carrier_list = array();
 		$customer = new Customer($cart->id_customer);
 		$carriers = Carrier::getCarriersForOrder($id_zone, $customer->getGroups(), $cart);
+				
 		foreach ($carriers as $carrier)
 			$available_carrier_list[] = $carrier['id_carrier'];
-
-		if (empty($warehouse_carrier_list))
-			$carrier_list = $available_carrier_list;
+		
+		if ($carrier_list)
+			$carrier_list = array_intersect($available_carrier_list, $carrier_list);
 		else
-			$carrier_list = array_intersect($warehouse_carrier_list, $available_carrier_list);
+			$carrier_list = $available_carrier_list;
+			 								
+		if (isset($warehouse_carrier_list))
+			$carrier_list = array_intersect($carrier_list, $warehouse_carrier_list);
 
 		if ($product->width > 0 || $product->height > 0 || $product->depth > 0 || $product->weight > 0)
 		{

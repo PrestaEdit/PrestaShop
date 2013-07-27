@@ -1,0 +1,483 @@
+//variables 
+$icon-color: #87C795
+$bg-content-color: #F6F5F3
+$bg-head-color: #9ED072
+
+@import "compass"
+@import "bootstrap/variables"
+@import "bootstrap"
+@import "font-awesome"
+@import "toggle-switch"
+
+html, body
+	height: 100%
+	min-height: 700px
+
+body.fixed-top
+	position: relative
+	top: 53px
+	margin-bottom: 50px
+	background-color: #C5C3BF
+
+#header_infos
+	height: 53px
+	border-bottom: solid 2px black
+	background-color: darken($brand-primary,10%)
+	z-index: 9999
+	@include box-shadow(rgba(black,0.15) 0 2px 0)
+	#header_shopname
+		font-size: 1.6em
+		font-family: "ubuntu"
+		font-weight: 300
+
+#main
+	min-height: 100%
+	height: 100%
+	position: relative
+
+#content
+	float: left
+	min-height: 100%
+	width: 1282px
+	padding: 90px 20px 90px
+	margin: 0 0 0 240px
+	border-left: 2px solid black
+	border-right: 2px solid black
+	background-color: $bg-content-color
+	background-image: url('../img/patterns/bedge_grunge.png')
+	@include box-shadow(darken($bg-content-color,30%) 0 0 0 4px)
+	fieldset
+		padding: 20px
+		margin-bottom: 10px
+		border: solid 1px darken($bg-content-color,20%)
+		background-color: $bg-content-color
+		@include border-radius(5px)
+		@include box-shadow(rgba(black,0.10) 0 0 7px, white 0 0 0 4px inset)
+	legend
+		float: left
+		padding: 0 0 0 0
+		margin: 5px 0 15px 0
+		color: darken(#D6D2CF,10%)
+		font-weight: 300
+	form .alert
+		clear: both
+		color: darken(#D6D2CF,40%)
+		border: solid 1px darken(#D6D2CF,5%)
+		background-color: lighten(#D6D2CF,5%)
+		&.alert-info
+			background-color: white
+			color: darken(#DAEAF8,30%)
+			border: none
+			border-bottom: solid 1px darken($bg-content-color,10%)
+			@include box-shadow(white 0 0 0 1px inset)
+
+.page-head
+	width: 1278px
+	height: 69px
+	padding: 4px 3px 0 20px
+	margin: 0
+	border-bottom: 4px solid darken($bg-head-color,30%)
+	position: fixed
+	top: 53px
+	left: 242px
+	z-index: 9000
+	background-color: $bg-head-color
+	@include box-shadow(rgba(black,0.15) 0 7px 0, rgba(white,0.15) 0 -1px 0 inset)
+	h2.page-title
+		@extend .pull-left
+		padding: 0
+		font-size: 20px
+		line-height: 25px
+		color: white
+		text-transform: uppercase
+	.btn-toolbar
+		margin: 0
+		.nav-tabs
+			margin: 0
+		.nav-tabs > li > a
+			color: #333
+			> .active > a, > .active > a:hover
+				color: #3399ff
+				background: #f5f5f5
+
+.page-sidebar
+	top: 53px
+	position: fixed
+	width: 240px
+	border-bottom: solid 1px black
+	@include box-shadow(darken($bg-content-color,30%) 0 4px 0)	
+	min-height: 700px
+	height: 100%
+	> ul > li > ul.sub-menu
+		display: none
+		list-style: none
+		clear: both
+		margin: 8px 0px 8px 0px
+	> ul
+		height: 100%
+		overflow: scroll
+		margin: 0
+		padding: 0
+		padding-bottom: 100px
+		li
+			background-color: #48525F
+			list-style: none
+		li:not(.active) ul
+			display: none
+		li.expanded
+			ul
+				display: block
+				background-color: white
+		> li
+			&:hover > a, &.active > a
+				color: white
+				background-color: darken(#48525F,15%)
+				border-top: 1px solid darken($brand-primary,15%)
+				border-bottom: 1px solid darken($brand-primary,10%)
+				@include box-shadow(darken($brand-primary,15%) -4px 0 0 inset)
+				@include transition-property(background-color, border)
+				@include transition-duration(0.4s)
+				@include transition-timing-function(ease-out)
+			> a
+				display: block
+				padding: 5px 0 5px 5px
+				border-top: 1px solid lighten(#48525F,5%)
+				border-bottom: 1px solid darken(#48525F,10%)
+				color: lighten(#48525F,35%)
+				text-transform: uppercase
+				text-decoration: none
+				@include box-shadow(darken(#48525F,5%) -4px 0 0 inset)
+			img
+				margin-right: 10px
+			ul
+				margin: 0
+				padding: 0
+				border-bottom: 1px solid #CECECE
+				background-color: white
+				li 
+					a
+						display: block
+						padding: 3px 15px 3px 20px
+						font-size: 12px
+						border: none
+						border-bottom: 1px solid #F5F5F5
+						background-color: white
+						i
+							margin-top: 3px
+							color: #CECECE
+						&:hover
+							background-color: lighten(#48525F,15%)
+							text-decoration: none
+							i
+								color: $brand-primary
+					&.active
+						a
+							color: #1A1A1A
+							background-color: $bg-head-color
+							i
+								color: $brand-primary
+
+#footer
+	position: fixed
+	width: 100%
+	bottom: 0
+	padding: 0
+	background-color: darken($brand-primary,10%)
+	.go-top
+		display: block
+		padding: 0px 6px 0px 6px
+		margin: -2px 0px 0px
+		text-decoration: none
+		color: #fff
+		cursor: pointer
+		font-size: 16px
+		background-color: #111
+		
+	.go-top i
+		color: #666
+		font-size: 22px
+		margin-bottom: 5px
+
+#menu .maintab > a [class^="icon-"], #menu .maintab > a [class*=" icon-"]
+	font-size: 22px
+	border-radius: 40px
+	height: 35px
+	width: 35px
+	color: white
+	display: inline-block
+	text-align: center
+	line-height: 35px
+
+// Tool bar
+.toolbar_btn
+	@extend .btn
+	@extend .btn-primary
+	position: relative
+	padding: 2px 5px !important
+	margin-right: 3px
+	border-bottom: 4px solid darken($brand-primary,7%)
+	font-size: 11px
+	color: lighten($brand-primary,50%)
+	text-shadow: -1px -1px 0 rgba(black,0.6)
+	@include background(linear-gradient(top, lighten($brand-primary,15%), $brand-primary))
+	@include box-shadow(rgba(black,0.15) 0 3px 0, rgba(white,0.1) 0 0 0 1px inset)
+	&:hover
+		top: 2px
+		border-color: $brand-primary
+		border-bottom: 2px solid lighten($brand-primary,10%)
+		color: $brand-primary
+		text-shadow: 1px 1px 0 rgba(white,0.6)
+		background-color: lighten($brand-primary,40%)!important
+		@include background(linear-gradient(top left, lighten($brand-primary,75%), lighten($brand-primary,55%)))
+		@include box-shadow(rgba(black,0.3) 0 1px 3px, rgba(white,0.4) 0 0 0 1px inset)
+
+.icon-AdminDashboard
+	@extend .icon-dashboard
+	background-color: adjust-hue($icon-color, 0)
+.icon-AdminCatalog
+	@extend .icon-book
+	background-color: adjust-hue($icon-color, 30)
+.icon-AdminParentOrders
+	@extend .icon-credit-card
+	background-color: adjust-hue($icon-color, 60)
+.icon-AdminParentCustomer
+	@extend .icon-group
+	background-color: adjust-hue($icon-color, 90)
+.icon-AdminPriceRule
+	@extend .icon-tags
+	background-color: adjust-hue($icon-color, 120)
+.icon-AdminParentShipping
+	@extend .icon-truck
+	background-color: adjust-hue($icon-color, 150)
+.icon-AdminParentLocalization
+	@extend .icon-globe
+	background-color: adjust-hue($icon-color, 180)
+.icon-AdminParentModules
+	@extend .icon-puzzle-piece
+	background-color: adjust-hue($icon-color, 210)
+.icon-AdminParentPreferences
+	@extend .icon-wrench
+	background-color: adjust-hue($icon-color, 240)
+.icon-AdminTools
+	@extend .icon-cogs
+	background-color: adjust-hue($icon-color, 270)
+.icon-AdminAdmin
+	@extend .icon-cog
+	background-color: adjust-hue($icon-color, 300)
+.icon-AdminParentStats
+	@extend .icon-bar-chart
+	background-color: adjust-hue($icon-color, 330)
+
+[class^="icon-Admin"]
+	//background-color: #9ED072
+	margin-right: 6px
+	color: $brand-primary!important
+
+[class^="process-icon-"], [class*=" process-icon-"]
+	height: 32px
+	min-width: 32px
+	background-position: center
+	background-repeat: no-repeat
+	display: block
+	font-family: FontAwesome
+	font-weight: normal
+	font-style: normal
+	font-size: 25px
+	line-height: 32px
+	text-decoration: inherit
+	-webkit-font-smoothing: antialiased
+	*margin-right: .3em
+
+.process-icon-new
+	@extend .icon-plus-sign-alt
+.process-icon-save
+	@extend .icon-save
+.process-icon-back
+	@extend .icon-arrow-left
+.process-icon-save-and-stay
+	@extend .icon-save
+.process-icon-help
+	@extend .icon-question-sign
+.process-icon-export
+	@extend .icon-cloud-download
+.process-icon-import
+	@extend .icon-cloud-upload
+.process-icon-help-new
+	@extend .icon-question-sign
+.process-icon-edit
+	@extend .icon-edit
+.process-icon-newAttributes
+	@extend .icon-plus-sign-alt
+.process-icon-modules-list
+	@extend .icon-puzzle-piece
+.process-icon-save-date
+	@extend .icon-download
+.process-icon-save-status
+	@extend .icon-download
+.process-icon-new-module
+	@extend .icon-plus
+.process-icon-delete
+	@extend .icon-trash
+.process-icon-update
+	@extend icon-refresh
+.process-icon-preview
+	@extend .icon-eye-open
+.process-icon-previewURL
+	@extend .icon-eye-open
+.process-icon-stats
+	@extend .icon-bar-chart
+.process-icon-duplicate
+	@extend .icon-copy
+
+.process-icon-newCombination.toolbar-new
+	@extend .icon-plus-sign
+
+.process-icon-newCombination.toolbar-cancel
+	@extend .icon-minus-sign
+
+.process-icon-partial_refund
+	@extend .icon-exchange
+.process-icon-cancel
+	@extend .icon-remove
+
+.navbar-inner
+	box-shadow: none!important
+	.input-append
+		margin-bottom: 0
+
+//form
+label.control-label
+	font-size: 13px
+	font-weight: normal
+	color: #666
+
+label.control-label span.label-tooltip
+	text-decoration: none
+	font-size: 13px
+	background-color: #D7E1ED
+	border: none
+	border-bottom: solid 1px darken($bg-content-color,20%)
+	padding: 0 5px
+	@include border-radius(3px)
+
+.tooltip
+	font-size: 12px
+
+label.required:before
+	content: '*'
+	color: red
+	font-size: 14px
+	position: relative
+	line-height: 12px
+
+select.input-tiny,
+input[type="text"].input-tiny,
+input[type="password"].input-tiny
+	width: 80px
+	float: left
+
+//some helpers to get fixed width
+.fixed-width-XS
+	width: 40px
+.fixed-width-S
+	width: 80px
+.fixed-width-M
+	width: 120px
+.fixed-width-L
+	width: 160px
+.fixed-width-XL
+	width: 200px
+
+.btn
+	text-transform: uppercase
+
+.btn-default
+	border-color: darken($bg-content-color,20%)
+	color: lighten($brand-primary,15%)
+	@include background(linear-gradient(top,$bg-content-color, darken($bg-content-color,10%)))
+	@include box-shadow(rgba(white,1) 0 0 0 1px inset)
+	&:hover, &:focus
+		border-color: darken($bg-content-color,30%)
+		color: lighten($brand-primary,15%)
+		@include background(linear-gradient(top, darken($bg-content-color,10%), darken($bg-content-color,20%)))
+		@include box-shadow(rgba(white,0.7) 0 0 0 1px inset)
+
+.btn-group-action
+	display: inline-block
+	white-space: nowrap
+	a
+		text-decoration: none
+.btn .caret
+	border-top-color: lighten($brand-primary,15%)!important
+hr
+	border-color: darken($bg-content-color,10%)
+	border-bottom: 1px solid white
+
+//table 
+.table
+	border-collapse: separate
+	border-spacing: 0 4px
+	thead th
+		background-color: lighten($brand-primary,20%)
+		color: white
+		border-bottom: solid 2px $brand-primary
+		@include box-shadow(rgba(black,0.15) 0 2px 3px)
+	thead > tr > th
+		font-weight: normal
+		vertical-align: top
+		span.title_box
+			display: block
+			word-wrap: nowrap
+			white-space: nowrap
+			&.active
+				font-weight: bold
+			a
+				text-decoration: none
+			a.active
+				color: black
+	input, select
+		margin: 0
+	tbody > tr > td
+		border-top: none
+		background-color: white
+	tbody > tr > td
+		padding: 3px 7px 3px 7px
+		vertical-align: middle
+		word-wrap: nowrap
+		font-size: 12px
+		@include box-shadow(rgba(black,0.15) 0 2px 0)
+	tbody > tr:hover > td
+		cursor: pointer
+		background-color: lighten(#C6C2BB,10%)
+		@include box-shadow(rgba(black,0.30) 0 2px 0)
+	td.center, th.center
+		text-align: center
+	tr td:first-child,
+	tr th:first-child 
+		border-top-left-radius: 3px
+		border-bottom-left-radius: 3px
+	tr td:last-child,
+	tr th:last-child 
+		border-top-right-radius: 3px
+		border-bottom-right-radius: 3px
+
+//filter table
+tr.filter
+	background-color: rgba(#A39F95,0.5)
+	input[type="text"].filter, input[type="password"].filter, select.filter
+		font-size: 12px
+		border-color: #A39F95
+
+.breadcrumb
+	background-color: lighten($bg-content-color,7%)
+
+
+.badge-success
+	@extend .badge
+	background-color: $brand-success
+
+.badge-error
+	@extend .badge
+	background-color: $brand-danger
+
+

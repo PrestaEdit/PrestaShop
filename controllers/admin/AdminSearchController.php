@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,8 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 6844 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -35,7 +34,7 @@ class AdminSearchControllerCore extends AdminController
 		/* Handle empty search field */
 		if (empty($this->query))
 		{
-			$this->errors[] = Tools::displayError('Please fill in search form first.');
+			$this->errors[] = Tools::displayError('Please complete the search form first.');
 			return;
 		}
 		else
@@ -112,7 +111,7 @@ class AdminSearchControllerCore extends AdminController
 						}
 					}
 					elseif ($searchType == 3)
-						$this->errors[] = Tools::displayError('No order found with this ID:').' '.Tools::htmlentitiesUTF8($this->query);
+						$this->errors[] = Tools::displayError('No order was found with this ID:').' '.Tools::htmlentitiesUTF8($this->query);
 				}
 			}
 
@@ -121,7 +120,7 @@ class AdminSearchControllerCore extends AdminController
 			{
 				if ((int)$this->query && Validate::isUnsignedInt((int)$this->query) && ($invoice = Order::getInvoice((int)$this->query)))
 					Tools::redirectAdmin($this->context->link->getAdminLink('AdminPdf').'&submitAction=generateInvoicePDF&id_order='.(int)($invoice['id_order']));
-				$this->errors[] = Tools::displayError('No invoice found with this ID:').' '.Tools::htmlentitiesUTF8($this->query);
+				$this->errors[] = Tools::displayError('No invoice was found with this ID:').' '.Tools::htmlentitiesUTF8($this->query);
 			}
 
 			/* Cart */
@@ -129,10 +128,21 @@ class AdminSearchControllerCore extends AdminController
 			{
 				if ((int)$this->query && Validate::isUnsignedInt((int)$this->query) && ($cart = new Cart($this->query)) && Validate::isLoadedObject($cart))
 					Tools::redirectAdmin('index.php?tab=AdminCarts&id_cart='.(int)($cart->id).'&viewcart'.'&token='.Tools::getAdminToken('AdminCarts'.(int)(Tab::getIdFromClassName('AdminCarts')).(int)$this->context->employee->id));
-				$this->errors[] = Tools::displayError('No cart found with this ID:').' '.Tools::htmlentitiesUTF8($this->query);
+				$this->errors[] = Tools::displayError('No cart was found with this ID:').' '.Tools::htmlentitiesUTF8($this->query);
 			}
 			/* IP */
 			// 6 - but it is included in the customer block
+
+			/* Module search */
+			if (!$searchType || $searchType == 7)
+			{
+				/* Handle module name */
+				if ($searchType == 7 && Validate::isModuleName($this->query) AND ($module = Module::getInstanceByName($this->query)) && Validate::isLoadedObject($module))
+					Tools::redirectAdmin('index.php?tab=AdminModules&tab_module='.$module->tab.'&module_name='.$module->name.'&anchor=anchor'.ucfirst($module->name).'&token='.Tools::getAdminTokenLite('AdminModules'));
+				
+				/* Normal catalog search */
+				$this->searchModule();
+			}
 		}
 		$this->display = 'view';
 	}
@@ -142,7 +152,7 @@ class AdminSearchControllerCore extends AdminController
 	{
 		if (!ip2long(trim($this->query)))
 		{
-			$this->errors[] = Tools::displayError('It seems that this is not an IP address:').' '.Tools::htmlentitiesUTF8($this->query);
+			$this->errors[] = Tools::displayError('This is not a valid IP address:').' '.Tools::htmlentitiesUTF8($this->query);
 			return;
 		}
 		$this->_list['customers'] = Customer::searchByIp($this->query);
@@ -169,6 +179,18 @@ class AdminSearchControllerCore extends AdminController
 	{
 		$this->_list['customers'] = Customer::searchByName($this->query);
 	}
+	
+	public function searchModule()
+	{
+		$this->_list['modules'] = array();
+		$all_modules = Module::getModulesOnDisk(true, true, Context::getContext()->employee->id);
+		foreach ($all_modules as $module)
+			if (stripos($module->name, $this->query) !== false || stripos($module->displayName, $this->query) !== false || stripos($module->description, $this->query) !== false)
+			{
+				$module->linkto = 'index.php?tab=AdminModules&tab_module='.$module->tab.'&module_name='.$module->name.'&anchor=anchor'.ucfirst($module->name).'&token='.Tools::getAdminTokenLite('AdminModules');
+				$this->_list['modules'][] = $module;
+			}
+	}
 
 	/**
 	* Search a feature in all store
@@ -180,7 +202,11 @@ class AdminSearchControllerCore extends AdminController
 		global $_LANGADM;
 		$tabs = array();
 		$key_match = array();
-		$result = Db::getInstance()->executeS('SELECT class_name, name FROM '._DB_PREFIX_.'tab t INNER JOIN '._DB_PREFIX_.'tab_lang tl ON t.id_tab = tl.id_tab AND tl.id_lang = '.(int)$this->context->language->id);
+		$result = Db::getInstance()->executeS('
+		SELECT class_name, name
+		FROM '._DB_PREFIX_.'tab t
+		INNER JOIN '._DB_PREFIX_.'tab_lang tl ON (t.id_tab = tl.id_tab AND tl.id_lang = '.(int)$this->context->language->id.')
+		WHERE active = 1');
 		foreach ($result as $row)
 		{
 			$tabs[strtolower($row['class_name'])] = $row['name'];
@@ -243,7 +269,7 @@ class AdminSearchControllerCore extends AdminController
 			'id_gender' => array('title' => $this->l('Titles'), 'align' => 'center', 'icon' => $genders_icon, 'list' => $genders, 'width' => 25),
 			'firstname' => array('title' => $this->l('First Name'), 'align' => 'left', 'width' => 150),
 			'lastname' => array('title' => $this->l('Name'), 'align' => 'left', 'width' => 'auto'),
-			'email' => array('title' => $this->l('E-mail address'), 'align' => 'left', 'width' => 250),
+			'email' => array('title' => $this->l('Email address'), 'align' => 'left', 'width' => 250),
 			'birthday' => array('title' => $this->l('Birth date'), 'align' => 'center', 'type' => 'date', 'width' => 75),
 			'date_add' => array('title' => $this->l('Registration date'), 'align' => 'center', 'type' => 'date', 'width' => 75),
 			'orders' => array('title' => $this->l('Orders'), 'align' => 'center', 'width' => 50),
@@ -361,6 +387,10 @@ class AdminSearchControllerCore extends AdminController
 					$view = $helper->generateList($this->_list['orders'], $this->fields_list['orders']);
 				$this->tpl_view_vars['orders'] = $view;
 			}
+
+			if (isset($this->_list['modules']))
+				$this->tpl_view_vars['modules'] = $this->_list['modules'];
+
 			return parent::renderView();
 		}
 	}

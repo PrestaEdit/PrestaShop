@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,8 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 7060 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -29,24 +28,32 @@ class AdminCartRulesControllerCore extends AdminController
 {
 	public function __construct()
 	{
+		$this->bootstrap = true;
 		$this->table = 'cart_rule';
 	 	$this->className = 'CartRule';
 	 	$this->lang = true;
-		$this->addRowAction('delete');
 		$this->addRowAction('edit');
+		$this->addRowAction('delete');
+
 	 	$this->bulk_actions = array('delete' => array('text' => $this->l('Delete selected'), 'confirm' => $this->l('Delete selected items?')));
 
 		$this->fields_list = array(
-			'id_cart_rule' => array('title' => $this->l('ID'), 'align' => 'center', 'width' => 25),
+			'id_cart_rule' => array('title' => $this->l('ID'), 'align' => 'center', 'width' => 40),
 			'name' => array('title' => $this->l('Name')),
-			'priority' => array('title' => $this->l('Priority')),
+			'priority' => array('title' => $this->l('Priority'), 'width' => 40),
 			'code' => array('title' => $this->l('Code')),
-			'quantity' => array('title' => $this->l('Quantity')),
+			'quantity' => array('title' => $this->l('Quantity'), 'width' => 40),
 			'date_to' => array('title' => $this->l('Until')),
 			'active' => array('title' => $this->l('Status'), 'align' => 'center', 'active' => 'status', 'type' => 'bool', 'orderby' => false),
 		);
 
 		parent::__construct();
+	}
+
+	public function setMedia()
+	{
+		parent::setMedia();
+		$this->addJqueryPlugin(array('typewatch', 'fancybox', 'autocomplete'));
 	}
 
 	public function postProcess()
@@ -114,13 +121,15 @@ class AdminCartRulesControllerCore extends AdminController
 
 			// Idiot-proof control
 			if (strtotime(Tools::getValue('date_from')) > strtotime(Tools::getValue('date_to')))
-				$this->errors[] = Tools::displayError('The voucher cannot end before it begins');
+				$this->errors[] = Tools::displayError('The voucher cannot end before it begins.');
 			if ((int)Tools::getValue('minimum_amount') < 0)
-				$this->errors[] = Tools::displayError('Minimum amount cannot be lower than 0');
+				$this->errors[] = Tools::displayError('The minimum amount cannot be lower than zero.');
 			if ((float)Tools::getValue('reduction_percent') < 0 || (float)Tools::getValue('reduction_percent') > 100)
 				$this->errors[] = Tools::displayError('Reduction percent must be between 0% and 100%');
 			if ((int)Tools::getValue('reduction_amount') < 0)
-				$this->errors[] = Tools::displayError('Reduction amount cannot be lower than 0');
+				$this->errors[] = Tools::displayError('Reduction amount cannot be lower than zero.');
+			if (Tools::getValue('code') && ($same_code = (int)CartRule::getIdByCode(Tools::getValue('code'))) && $same_code != Tools::getValue('id_cart_rule'))
+				$this->errors[] = sprintf(Tools::displayError('This cart rule code is already used (conflict with cart rule %d)'), $same_code);
 		}
 
 		return parent::postProcess();
@@ -444,7 +453,7 @@ class AdminCartRulesControllerCore extends AdminController
 			);
 		}
 		else
-			return array('found' => false, 'notfound' => Tools::displayError('No product found'));
+			return array('found' => false, 'notfound' => Tools::displayError('No product has been found.'));
 	}
 	
 	public function ajaxProcessSearchProducts()
@@ -463,13 +472,6 @@ class AdminCartRulesControllerCore extends AdminController
 			'href' => '#',
 			'desc' => $this->l('Save and Stay')
 		);
-
-		// Todo: change for "Media" version
-		$this->addJs(_PS_JS_DIR_.'jquery/plugins/jquery.typewatch.js');
-		$this->addJs(_PS_JS_DIR_.'jquery/plugins/fancybox/jquery.fancybox.js');
-		$this->addJs(_PS_JS_DIR_.'jquery/plugins/autocomplete/jquery.autocomplete.js');
-		$this->addCss(_PS_JS_DIR_.'jquery/plugins/fancybox/jquery.fancybox.css');
-		$this->addCss(_PS_JS_DIR_.'jquery/plugins/autocomplete/jquery.autocomplete.css');
 
 		$current_object = $this->loadObject(true);
 
@@ -541,7 +543,7 @@ class AdminCartRulesControllerCore extends AdminController
 				'show_toolbar' => true,
 				'toolbar_btn' => $this->toolbar_btn,
 				'toolbar_scroll' => $this->toolbar_scroll,
-				'title' => array($this->l('Payment'), $this->l('Cart Rules')),
+				'title' => array($this->l('Payment: '), $this->l('Cart Rules')),
 				'defaultDateFrom' => date('Y-m-d H:00:00'),
 				'defaultDateTo' => date('Y-m-d H:00:00', strtotime('+1 month')),
 				'customerFilter' => $customer_filter,

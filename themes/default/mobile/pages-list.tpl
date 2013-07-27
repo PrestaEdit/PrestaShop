@@ -19,22 +19,21 @@
 *
 *  @author PrestaShop SA <contact@prestashop.com>
 *  @copyright  2007-2011 PrestaShop SA
-*  @version  Release: $Revision: 6594 $
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-		<hr width="99%" align="center" size="2" class=""/>
+		<hr/>
 		<h2 class="site_map">{l s='Sitemap'}</h2>
 		<ul data-role="listview" data-inset="true" id="category">
-			{if $controller_name != 'index'}<li><a href="{$link->getPageLink('index', true)}" data-ajax="false">Accueil</a></li>{/if}
+			{if $controller_name != 'index'}<li><a href="{$link->getPageLink('index', true)|escape:'html'}" data-ajax="false">Accueil</a></li>{/if}
 			
 			{* need to set a Hook : hookMobilePagesList *}
 			{* ===================================== *}
-			<li><a href="{$link->getCategoryLink(3, false)}" data-ajax="false">IPod</a></li>
-			<li><a href="{$link->getCategoryLink(4, false)}" data-ajax="false">Accessoires</a></li>
+			<li><a href="{$link->getCategoryLink(3, false)|escape:'html'}" data-ajax="false">IPod</a></li>
+			<li><a href="{$link->getCategoryLink(4, false)|escape:'html'}" data-ajax="false">Accessoires</a></li>
 			{* ===================================== *}
 			
-			{if $controller_name != 'my-account'}<li><a href="{$link->getPageLink('my-account', true)}" data-ajax="false">{l s='My account'}</a></li>{/if}
-			{if $controller_name != 'contact'}<li><a href="{$link->getPageLink('contact', true)}" data-ajax="false">{l s='Contact'}</a></li>{/if}
+			{if $controller_name != 'my-account'}<li><a href="{$link->getPageLink('my-account', true)|escape:'html'}" data-ajax="false">{l s='My account'}</a></li>{/if}
+			{if $controller_name != 'contact'}<li><a href="{$link->getPageLink('contact', true)|escape:'html'}" data-ajax="false">{l s='Contact'}</a></li>{/if}
 		</ul>

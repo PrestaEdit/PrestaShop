@@ -1,5 +1,5 @@
 {*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,22 +18,19 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision$
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 {include file='header.tpl'}
 {if isset($conf)}
-	<div class="conf">
+	<div class="alert">
 		{$conf}
 	</div>
 {/if}
 {if count($errors) && (!isset($disableDefaultErrorOutPut) || $disableDefaultErrorOutPut == false)}
-	<div class="error">
-		<span style="float:right">
-			<a id="hideError" href="#"><img alt="X" src="../img/admin/close.png" /></a>
-		</span>
+	<div class="alert alert-danger">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
 		
 		{if count($errors) == 1}
 			{$errors[0]}
@@ -48,31 +45,31 @@
 		{/if}
 	</div>
 {/if}
-
 {if isset($informations) && count($informations) && $informations}
-	<div class="hint clear" style="display:block;">
-		{foreach $informations as $info}
-			{$info}<br />
-		{/foreach}
+	<div class="alert alert-info">
+		<span id="see_more_infos">
+			<b><a href="#" onclick="$('#see_more_infos').hide(); $('#infos_block').show();return false;">{l s='Click here to see more informations'}</a></b>
+		</span>
+		<div id="infos_block" style="display:none;">
+			{foreach $informations as $info}
+				{$info}<br />
+			{/foreach}
+		</div>
 	</div><br />
 {/if}
-
 {if isset($confirmations) && count($confirmations) && $confirmations}
-	<div class="conf" style="display:block;">
+	<div class="alert" style="display:block;">
 		{foreach $confirmations as $conf}
 			{$conf}<br />
 		{/foreach}
 	</div><br />
 {/if}
-
 {if count($warnings)}
-	<div class="warn">
-		<span style="float:right">
-			<a id="hideWarn" href=""><img alt="X" src="../img/admin/close.png" /></a>
-		</span>
+	<div class="alert alert-block">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
 		{if count($warnings) > 1}
 			{l s='There are %d warnings.' sprintf=count($warnings)}
-			<span style="margin-left:20px;" id="labelSeeMore">
+			<span id="labelSeeMore">
 				<a id="linkSeeMore" href="#" style="text-decoration:underline">{l s='Click here to see more'}</a>
 				<a id="linkHide" href="#" style="text-decoration:underline;display:none">{l s='Hide warning'}</a>
 			</span>
@@ -82,7 +79,7 @@
 			{/foreach}
 			</ul>
 		{else}
-			<ul style="margin-top: 3px">
+			<ul >
 			{foreach $warnings as $warning}
 				<li>{$warning}</li>
 			{/foreach}
@@ -91,5 +88,8 @@
 	</div>
 {/if}
 
+{if !$bootstrap}<div id="nobootstrap">{/if}
 {$page}
+{if !$bootstrap}</div>{/if}
+
 {include file='footer.tpl'}

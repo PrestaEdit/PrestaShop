@@ -1,5 +1,5 @@
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,14 +18,14 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 6844 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
 function addProductRuleGroup()
 {
+	$('#product_rule_group_table').show();
 	product_rule_groups_counter += 1;
 	product_rule_counters[product_rule_groups_counter] = 0;
 
@@ -85,6 +85,13 @@ function addCartRuleOption(item)
 
 function updateProductRuleShortDescription(item)
 {
+	/******* For IE: put a product in condition on cart rules *******/
+	if(typeof String.prototype.trim !== 'function') {
+	  String.prototype.trim = function() {
+		return this.replace(/^\s+|\s+$/g, ''); 
+	  }
+	}
+
 	var id1 = $(item).attr('id').replace('_add', '').replace('_remove', '');
 	var id2 = id1.replace('_select', '');
 	var length = $('#' + id1 + '_2 option').length;
@@ -296,16 +303,16 @@ $('#customerFilter')
 function displayCartRuleTab(tab)
 {
 	$('.cart_rule_tab').hide();
-	$('.tab-page').removeClass('selected');
+	$('.tab-row.active').removeClass('active');
 	$('#cart_rule_' + tab).show();
-	$('#cart_rule_link_' + tab).addClass('selected');
+	$('#cart_rule_link_' + tab).parent().addClass('active');
 	$('#currentFormTab').val(tab);
 }
 
 $('.cart_rule_tab').hide();
-$('.tab-page').removeClass('selected');
+$('.tab-row.active').removeClass('active');
 $('#cart_rule_' + currentFormTab).show();
-$('#cart_rule_link_' + currentFormTab).addClass('selected');
+$('#cart_rule_link_' + currentFormTab).parent().addClass('active');
 
 var date = new Date();
 var hours = date.getHours();
@@ -339,7 +346,8 @@ function searchProducts()
 	
 	$.ajax({
 		type: 'POST',
-		url: 'ajax-tab.php',
+		headers: { "cache-control": "no-cache" }, 		
+		url: 'ajax-tab.php' + '?rand=' + new Date().getTime(),
 		async: true,
 		dataType: 'json',
 		data: {

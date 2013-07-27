@@ -31,8 +31,8 @@
     <meta id="sitemap">
       <page>sitemap</page>
     </meta>
-    <meta id="supply">
-      <page>supply</page>
+    <meta id="supplier">
+      <page>supplier</page>
     </meta>
     <meta id="address">
       <page>address</page>
@@ -78,6 +78,9 @@
     </meta>
     <meta id="guest-tracking">
       <page>guest-tracking</page>
+    </meta>
+    <meta id="order-confirmation">
+      <page>order-confirmation</page>
     </meta>
   </entities>
 </entity_meta>

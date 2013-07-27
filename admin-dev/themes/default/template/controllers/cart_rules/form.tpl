@@ -1,9 +1,12 @@
-{include file="toolbar.tpl" toolbar_btn=$toolbar_btn toolbar_scroll=$toolbar_scroll title=$title}
-<div class="leadin">{block name="leadin"}{/block}</div>
+<div class="row-fluid">
+	{include file="toolbar.tpl" toolbar_btn=$toolbar_btn toolbar_scroll=$toolbar_scroll title=$title}
+	<div class="leadin">{block name="leadin"}{/block}</div>
+</div>
 
-<div>
+
+<div class="row-fluid">
  	<div class="productTabs">
-		<ul class="tab">
+		<ul class="tab nav nav-tabs">
 			<li class="tab-row">
 				<a class="tab-page" id="cart_rule_link_informations" href="javascript:displayCartRuleTab('informations');">{l s='Information'}</a>
 			</li>
@@ -16,30 +19,29 @@
 		</ul>
 	</div>
 </div>
-<form action="{$currentIndex|escape}&token={$currentToken|escape}&addcart_rule" id="cart_rule_form" method="post">
-	{if $currentObject->id}<input type="hidden" name="id_cart_rule" value="{$currentObject->id|intval}" />{/if}
-	<input type="hidden" id="currentFormTab" name="currentFormTab" value="informations" />
-	<div id="cart_rule_informations" class="cart_rule_tab">
-		<h4>{l s='Cart rule information'}</h4>
-		<div class="separation"></div>
-		{include file='controllers/cart_rules/informations.tpl'}
-	</div>
-	<div id="cart_rule_conditions" class="cart_rule_tab">
-		<h4>{l s='Cart rule conditions'}</h4>
-		<div class="separation"></div>
-		{include file='controllers/cart_rules/conditions.tpl'}
-	</div>
-	<div id="cart_rule_actions" class="cart_rule_tab">
-		<h4>{l s='Cart rule actions'}</h4>
-		<div class="separation"></div>
-		{include file='controllers/cart_rules/actions.tpl'}
-	</div>
-	<div class="separation"></div>
-	<div style="text-align:center">
-		<input type="submit" value="{l s='Save'}" class="button" name="submitAddcart_rule" id="{$table|escape}_form_submit_btn" />
+
+<div class="row-fluid">
+	<form action="{$currentIndex|escape}&token={$currentToken|escape}&addcart_rule" id="cart_rule_form" class="form-horizontal" method="post">
+		{if $currentObject->id}<input type="hidden" name="id_cart_rule" value="{$currentObject->id|intval}" />{/if}
+		<input type="hidden" id="currentFormTab" name="currentFormTab" value="informations" />
+		<fieldset id="cart_rule_informations" class="cart_rule_tab">
+			<legend>{l s='Cart-rule information'}</legend>
+			{include file='controllers/cart_rules/informations.tpl'}
+		</fieldset>
+		<fieldset id="cart_rule_conditions" class="cart_rule_tab">
+			<legend>{l s='Cart-rule conditions'}</legend>
+			{include file='controllers/cart_rules/conditions.tpl'}
+		</fieldset>
+		<fieldset id="cart_rule_actions" class="cart_rule_tab">
+			<legend>{l s='Cart-rule actions'}</legend>
+			{include file='controllers/cart_rules/actions.tpl'}
+		</fieldset>
+		<hr/>
+		<button type="submit" class="btn btn-primary btn-large pull-right" name="submitAddcart_rule" id="{$table|escape}_form_submit_btn"><i class="icon-save"></i> {l s='Save'}</button>
 		<!--<input type="submit" value="{l s='Save and stay'}" class="button" name="submitAddcart_ruleAndStay" id="" />-->
-	</div>
-</form>
+	</form>
+</div>
+
 <script type="text/javascript">
 	var product_rule_groups_counter = {if isset($product_rule_groups_counter)}{$product_rule_groups_counter|intval}{else}0{/if};
 	var product_rule_counters = new Array();
@@ -56,4 +58,5 @@
 	{/foreach}
 	displayFlags(languages, {$id_lang_default});
 </script>
+
 <script type="text/javascript" src="themes/default/template/controllers/cart_rules/form.js"></script>

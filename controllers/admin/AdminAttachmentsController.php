@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,14 +19,14 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 6844 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
 class AdminAttachmentsControllerCore extends AdminController
 {
+	public $bootstrap = true ;
 
 	protected $product_attachements = array();
 
@@ -42,8 +42,7 @@ class AdminAttachmentsControllerCore extends AdminController
 		$this->fields_list = array(
 			'id_attachment' => array(
 				'title' => $this->l('ID'),
-				'align' => 'center',
-				'width' => 25
+				'align' => 'center'
 			),
 			'name' => array(
 				'title' => $this->l('Name')
@@ -61,14 +60,13 @@ class AdminAttachmentsControllerCore extends AdminController
 		$this->fields_form = array(
 			'legend' => array(
 				'title' => $this->l('Attachment'),
-				'image' => '../img/t/AdminAttachments.gif'
+				'icon' => 'icon-paper-clip'
 			),
 			'input' => array(
 				array(
 					'type' => 'text',
 					'label' => $this->l('Filename:'),
 					'name' => 'name',
-					'size' => 33,
 					'required' => true,
 					'lang' => true,
 				),
@@ -76,19 +74,17 @@ class AdminAttachmentsControllerCore extends AdminController
 					'type' => 'textarea',
 					'label' => $this->l('Description:'),
 					'name' => 'description',
-					'cols' => 40,
-					'rows' => 10,
 					'lang' => true,
 				),
 				array(
 					'type' => 'file',
 					'label' => $this->l('File:'),
 					'name' => 'file',
-					'desc' => $this->l('Upload file from your computer')
+					'hint' => $this->l('Upload a file from your computer.')
 				),
 			),
 			'submit' => array(
-				'title' => $this->l('   Save   '),
+				'title' => $this->l('Save   '),
 				'class' => 'button'
 			)
 		);
@@ -146,7 +142,7 @@ class AdminAttachmentsControllerCore extends AdminController
 				{
 					if ($_FILES['file']['size'] > (Configuration::get('PS_ATTACHMENT_MAXIMUM_SIZE') * 1024 * 1024))
 						$this->errors[] = sprintf(
-							$this->l('File too large, maximum size allowed: %1$d kB. File size you\'re trying to upload is:  %2$d kB.'),
+							$this->l('The file is too large. Maximum size allowed is: %1$d kB. The file you\'re trying to upload is:  %2$d kB.'),
 							(Configuration::get('PS_ATTACHMENT_MAXIMUM_SIZE') * 1024),
 							number_format(($_FILES['file']['size'] / 1024), 2, '.', '')
 						);
@@ -155,7 +151,7 @@ class AdminAttachmentsControllerCore extends AdminController
 						do $uniqid = sha1(microtime());
 						while (file_exists(_PS_DOWNLOAD_DIR_.$uniqid));
 						if (!copy($_FILES['file']['tmp_name'], _PS_DOWNLOAD_DIR_.$uniqid))
-							$this->errors[] = $this->l('File copy failed');
+							$this->errors[] = $this->l('Failed to copy the file.');
 						$_POST['file_name'] = $_FILES['file']['name'];
 						@unlink($_FILES['file']['tmp_name']);
 						$_POST['file'] = $uniqid;
@@ -168,13 +164,13 @@ class AdminAttachmentsControllerCore extends AdminController
 					$max_post = (int)ini_get('post_max_size');
 					$upload_mb = min($max_upload, $max_post);
 					$this->errors[] = sprintf(
-						$this->l('The File %1$s exceeds the size allowed by the server. The limit is set to %2$d MB.'),
+						$this->l('The file %1$s exceeds the size allowed by the server. The limit is set to %2$d MB.'),
 						'<b>'.$_FILES['file']['name'].'</b> ',
 						'<b>'.$upload_mb.'</b>'
 					);
 				}
 				else if (!empty($_FILES['file']['tmp_name']))
-					$this->errors[] = $this->l('No file or your file is not uploadable, please check your server configuration for the maximum upload size.');
+					$this->errors[] = $this->l('Upload error.  Please check your server configurations for the maximum upload size allowed.');
 			}
 			$this->validateRules();
 		}

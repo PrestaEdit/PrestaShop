@@ -1,5 +1,5 @@
 {*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,12 +18,15 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision$
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
 <a href="{$url_enable}" {if isset($confirm)}onclick="return confirm('{$confirm}');"{/if} title="{if $enabled}{l s='Enabled'}{else}{l s='Disabled'}{/if}">
-	<img src="../img/admin/{if $enabled}enabled.gif{else}disabled.gif{/if}" alt="{if $enabled}{l s='Enabled'}{else}{l s='Disabled'}{/if}" />
+	{if $enabled}
+		<span class="label label-success"><i class="icon-check-sign"></i> {l s='Enabled'}</span>
+	{else}
+		<span class="label label-important"><i class="icon-ban-circle"></i> {l s='Disabled'}</span>
+	{/if}
 </a>

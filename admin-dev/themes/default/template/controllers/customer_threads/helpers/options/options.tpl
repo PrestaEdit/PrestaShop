@@ -1,5 +1,5 @@
 {*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,8 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision$
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
@@ -33,7 +32,7 @@
 				<p>{l s='Click to synchronize mail automatically'}</p>
 				<div id="ajax_loader"></div>
 				<div class="error" style="display:none" id="ajax_error"></div>
-				<div class="conf" style="display:none" id="ajax_conf"></div>
+				<div class="alert" style="display:none" id="ajax_conf"></div>
 			</div>
 		</fieldset><br/>
 		<script type="text/javascript"> 
@@ -50,8 +49,15 @@
 				$('#ajax_loader').html('<img src="{$smarty.const._PS_ADMIN_IMG_}ajax-loader.gif">');
 				ajaxQuery = $.ajax({
 					type: "POST",
-					url: "ajax.php",
-					data: "syncImapMail=1",
+					url: "index.php",
+					data: {
+						ajax: "1",
+						token: "{$token}", 
+						syncImapMail: "1",
+						ajax:"1",
+						action:"syncImap",
+						tab:"AdminCustomerThreads"
+					},
 					dataType : "json",
 					success: function(jsonData) {
 						jsonError = '';

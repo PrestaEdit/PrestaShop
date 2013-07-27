@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,8 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 8971 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -44,7 +43,7 @@ class AdminCarriersControllerCore extends AdminController
 		$this->context = Context::getContext();
 
 		$this->bulk_actions = array(
-			'delete' => array('text' => $this->l('Delete selected'), 'confirm' => $this->l('Delete selected items?')),
+			'delete' => array('text' => $this->l('Delete selected'), 'confirm' => $this->l('Are you sure that you want to delete the selected items?')),
 			'enableSelection' => array('text' => $this->l('Enable selection')),
 			'disableSelection' => array('text' => $this->l('Disable selection'))
 			);
@@ -163,25 +162,25 @@ class AdminCarriersControllerCore extends AdminController
 			'&nbsp;<b>'.$this->l('How do I create a new carrier?').'</b>
 			<br />
 			<ul>
-			<li>'.$this->l('Click "Add new."').'<br /></li>
+			<li>'.$this->l('Click "Add New."').'<br /></li>
 				<li>'.$this->l('Fill in the fields and click "Save."').'</li>
 				<li>'.
-					$this->l('You need to set a price range or a weight range for which the new carrier will be available.').' '.
-					$this->l('Under the "Shipping" menu, click either "Price Ranges" or "Weight Ranges".').'
+					$this->l('You need to set a price range -- or weight range -- for which the new carrier will be available.').' '.
+					$this->l('Under the "Shipping" menu, click either "Price ranges" or "Weight ranges.".').'
 				</li>
-				<li>'.$this->l('Click "Add new."').'</li>
+				<li>'.$this->l('Click "Add New."').'</li>
 				<li>'.
-					$this->l('Select the name of the carrier and define the price range or the weight range.').' '.
+					$this->l('Select the name of the carrier before defining the price or weight range.').' '.
 					$this->l('For example, the carrier can be made available for a weight range between 0 and 5lbs. Another carrier can have a range between 5 and 10lbs.').'
 				</li>
-				<li>'.$this->l('When you are done, click "Save."').'</li>
+				<li>'.$this->l('When you\'re done, click "Save."').'</li>
 				<li>'.$this->l('Click on the "Shipping" menu.').'</li>
 				<li>'.
 					$this->l('You need to set the fees that will be applied for this carrier.').' '.
-					$this->l('At the bottom on the page, in the "Fees" section, select the name of the carrier.').'
+					$this->l('At the bottom on the page -- in the "Fees" section -- select the name of the carrier.').'
 				</li>
-				<li>'.$this->l('For each zone, enter a price and click "Save."').'</li>
-				<li>'.$this->l('You\'re all set! The new carrier will be displayed to your customers.').'</li>
+				<li>'.$this->l('For each zone, enter a price and then click "Save."').'</li>
+				<li>'.$this->l('You\'re all set! The new carrier will now be displayed to customers.').'</li>
 			</ul>'
 		);
 		$this->_select = 'b.*';
@@ -197,7 +196,7 @@ class AdminCarriersControllerCore extends AdminController
 	{
 		$this->fields_form = array(
 			'legend' => array(
-				'title' => $this->l('Carriers'),
+				'title' => $this->l('Carriers:'),
 				'image' => '../img/admin/delivery.gif'
 			),
 			'input' => array(
@@ -210,14 +209,14 @@ class AdminCarriersControllerCore extends AdminController
 					'hint' => sprintf($this->l('Allowed characters: letters, spaces and %s'), '().-'),
 					'desc' => array(
 						$this->l('Carrier name displayed during checkout'),
-						$this->l('For in-store pickup, enter 0 to replace the carrier name with your shop name')
+						$this->l('For in-store pickup, enter 0 to replace the carrier name with your shop name.')
 					)
 				),
 				array(
 					'type' => 'file',
 					'label' => $this->l('Logo:'),
 					'name' => 'logo',
-					'desc' => $this->l('Upload a logo from your computer').' (.gif, .jpg, .jpeg '.$this->l('or').' .png)'
+					'desc' => $this->l('Upload a logo from your computer.').' (.gif, .jpg, .jpeg '.$this->l('or').' .png)'
 				),
 				array(
 					'type' => 'text',
@@ -227,7 +226,7 @@ class AdminCarriersControllerCore extends AdminController
 					'required' => true,
 					'size' => 41,
 					'maxlength' => 128,
-					'desc' => $this->l('Estimated delivery time, displayed during checkout')
+					'desc' => $this->l('Estimated delivery time will be displayed during checkout.')
 				),
 				array(
 					'type' => 'text',
@@ -235,14 +234,14 @@ class AdminCarriersControllerCore extends AdminController
 					'name' => 'grade',
 					'required' => false,
 					'size' => 1,
-					'desc' => $this->l('"0" for a longest shipping delay, "9" for the shortest shipping delay.')
+					'desc' => $this->l('Enter "0" for a longest shipping delay, or "9" for the shortest shipping delay.')
 				),
 				array(
 					'type' => 'text',
 					'label' => $this->l('URL:'),
 					'name' => 'url',
 					'size' => 40,
-					'desc' => $this->l('Delivery tracking URL; type \'@\' where the tracking number will appear, it will be automatically replaced by the tracking number')
+					'desc' => $this->l('Delivery tracking URL: Type \'@\' where the tracking number should appear. It will then be automatically replaced by the tracking number.')
 				),
 				array(
 					'type' => 'checkbox',
@@ -253,14 +252,14 @@ class AdminCarriersControllerCore extends AdminController
 						'id' => 'id_zone',
 						'name' => 'name'
 					),
-					'desc' => $this->l('The zones in which this carrier is to be used')
+					'desc' => $this->l('The zones in which this carrier will be used')
 				),
 				array(
 					'type' => 'group',
 					'label' => $this->l('Group access:'),
 					'name' => 'groupBox',
 					'values' => Group::getGroups(Context::getContext()->language->id),
-					'desc' => $this->l('Mark all groups for which you want to give access to this carrier')
+					'desc' => $this->l('Mark the groups that are allowed access to this carrier.')
 				),
 				array(
 					'type' => 'radio',
@@ -281,7 +280,7 @@ class AdminCarriersControllerCore extends AdminController
 							'label' => $this->l('Disabled')
 						)
 					),
-					'desc' => $this->l('Enable carrier in the Front Office')
+					'desc' => $this->l('Enable the carrier in the Front Office')
 				),
 				array(
 					'type' => 'radio',
@@ -301,7 +300,7 @@ class AdminCarriersControllerCore extends AdminController
 							'label' => '<img src="../img/admin/disabled.gif" alt="'.$this->l('No').'" title="'.$this->l('No').'" />'
 						)
 					),
-					'desc' => $this->l('Apply both regular shipping cost and product-specific additional shipping costs')
+					'desc' => $this->l('Apply both regular shipping cost and product-specific shipping costs.')
 				),
 				array(
 					'type' => 'select',
@@ -319,7 +318,7 @@ class AdminCarriersControllerCore extends AdminController
 				),
 				array(
 					'type' => 'radio',
-					'label' => $this->l('Shipping & handling:'),
+					'label' => $this->l('Shipping and handling:'),
 					'name' => 'shipping_handling',
 					'required' => false,
 					'class' => 't',
@@ -336,7 +335,7 @@ class AdminCarriersControllerCore extends AdminController
 							'label' => $this->l('Disabled')
 						)
 					),
-					'desc' => $this->l('Include the shipping & handling costs in carrier price')
+					'desc' => $this->l('Include the shipping and handling costs in the carrier price.')
 				),
 				array(
 					'type' => 'radio',
@@ -381,7 +380,7 @@ class AdminCarriersControllerCore extends AdminController
 						'id' => 'id',
 						'name' => 'name'
 					),
-					'desc' => $this->l('Out-of-range behavior when none is defined (e.g. when a customer\'s cart weight is greater than the highest range limit)')
+					'desc' => $this->l('Out-of-range behavior occurs when none is defined (e.g. when a customer\'s cart weight is greater than the highest range limit)')
 				),
 				array(
 					'type' => 'text',
@@ -389,7 +388,7 @@ class AdminCarriersControllerCore extends AdminController
 					'name' => 'max_height',
 					'required' => false,
 					'size' => 10,
-					'desc' => $this->l('Maximum height managed by this carrier. Set "0" or leave this field blank to ignore this.')
+					'desc' => $this->l('Maximum height managed by this carrier. Set the value to "0," or leave this field blank to ignore.')
 				),
 				array(
 					'type' => 'text',
@@ -397,7 +396,7 @@ class AdminCarriersControllerCore extends AdminController
 					'name' => 'max_width',
 					'required' => false,
 					'size' => 10,
-					'desc' => $this->l('Maximum width managed by this carrier. Set "0" or leave this field blank to ignore this.')
+					'desc' => $this->l('Maximum width managed by this carrier. Set the value to "0," or leave this field blank to ignore.')
 				),
 				array(
 					'type' => 'text',
@@ -405,7 +404,7 @@ class AdminCarriersControllerCore extends AdminController
 					'name' => 'max_depth',
 					'required' => false,
 					'size' => 10,
-					'desc' => $this->l('Maximum depth managed by this carrier. Set "0" or leave this field blank to ignore this.')
+					'desc' => $this->l('Maximum depth managed by this carrier. Set the value to "0," or leave this field blank to ignore.')
 				),
 				array(
 					'type' => 'text',
@@ -413,7 +412,7 @@ class AdminCarriersControllerCore extends AdminController
 					'name' => 'max_weight',
 					'required' => false,
 					'size' => 10,
-					'desc' => $this->l('Maximum weight managed by this carrier. Set "0" or leave this field blank to ignore this.')
+					'desc' => $this->l('Maximum weight managed by this carrier. Set the value to "0," or leave this field blank to ignore.')
 				),
 				array(
 					'type' => 'hidden',
@@ -444,7 +443,7 @@ class AdminCarriersControllerCore extends AdminController
 		}
 
 		$this->fields_form['submit'] = array(
-			'title' => $this->l('   Save   '),
+			'title' => $this->l('Save   '),
 			'class' => 'button'
 		);
 
@@ -468,40 +467,47 @@ class AdminCarriersControllerCore extends AdminController
 				/* Object update */
 				if (isset($id) && !empty($id))
 				{
-					if ($this->tabAccess['edit'] === '1')
-					{
-						$current_carrier = new Carrier($id);
-						if (!Validate::isLoadedObject($current_carrier))
-							throw new PrestaShopException('Cannot load Carrier object');
-						// Set flag deteled to true for historization
-						$current_carrier->deleted = true;
-						$current_carrier->update();
-
-						// Create new carrier
-						$new_carrier = new Carrier();
-						// Fill the new carrier object
-						$this->copyFromPost($new_carrier, $this->table);
-						$new_carrier->position = $current_carrier->position;
-						if ($new_carrier->add())
+					try {
+						if ($this->tabAccess['edit'] === '1')
 						{
-							$this->updateAssoShop($new_carrier->id);
-							$new_carrier->copyCarrierData((int)$current_carrier->id);
-							$this->changeGroups($new_carrier->id);
-							// Call of hooks
-							Hook::exec('actionCarrierUpdate', array(
-								'id_carrier' => (int)$current_carrier->id,
-								'carrier' => $new_carrier
-							));
-							$this->postImage($new_carrier->id);
-							$this->changeZones($new_carrier->id);
-							$new_carrier->setTaxRulesGroup((int)Tools::getValue('id_tax_rules_group'));
-							Tools::redirectAdmin(self::$currentIndex.'&id_'.$this->table.'='.$current_carrier->id.'&conf=4&token='.$this->token);
+							$current_carrier = new Carrier($id);
+							if (!Validate::isLoadedObject($current_carrier))
+								throw new PrestaShopException('Cannot load Carrier object');
+							
+							// Duplicate current Carrier
+							$new_carrier = $current_carrier->duplicateObject();
+							if (Validate::isLoadedObject($new_carrier))
+							{
+								// Set flag deteled to true for historization
+								$current_carrier->deleted = true;
+								$current_carrier->update();
+
+								// Fill the new carrier object
+								$this->copyFromPost($new_carrier, $this->table);
+								$new_carrier->position = $current_carrier->position;
+								$new_carrier->update();
+
+								$this->updateAssoShop($new_carrier->id);
+								$new_carrier->copyCarrierData((int)$current_carrier->id);
+								$this->changeGroups($new_carrier->id);
+								// Call of hooks
+								Hook::exec('actionCarrierUpdate', array(
+									'id_carrier' => (int)$current_carrier->id,
+									'carrier' => $new_carrier
+								));
+								$this->postImage($new_carrier->id);
+								$this->changeZones($new_carrier->id);
+								$new_carrier->setTaxRulesGroup((int)Tools::getValue('id_tax_rules_group'));
+								Tools::redirectAdmin(self::$currentIndex.'&id_'.$this->table.'='.$current_carrier->id.'&conf=4&token='.$this->token);
+							}
+							else
+								$this->errors[] = Tools::displayError('An error occurred while updating an object.').' <b>'.$this->table.'</b>';
 						}
 						else
-							$this->errors[] = Tools::displayError('An error occurred while updating object.').' <b>'.$this->table.'</b>';
+							$this->errors[] = Tools::displayError('You do not have permission to edit this.');
+					} catch (PrestaShopException $e) {
+						$this->errors[] = $e->getMessage();
 					}
-					else
-						$this->errors[] = Tools::displayError('You do not have permission to edit here.');
 				}
 
 				/* Object creation */
@@ -525,10 +531,10 @@ class AdminCarriersControllerCore extends AdminController
 							}
 						}
 						else
-							$this->errors[] = Tools::displayError('An error occurred while creating object.').' <b>'.$this->table.'</b>';
+							$this->errors[] = Tools::displayError('An error occurred while creating an object.').' <b>'.$this->table.'</b>';
 					}
 					else
-						$this->errors[] = Tools::displayError('You do not have permission to add here.');
+						$this->errors[] = Tools::displayError('You do not have permission to add this.');
 				}
 			}
 			parent::postProcess();
@@ -538,18 +544,18 @@ class AdminCarriersControllerCore extends AdminController
 			if ($this->tabAccess['edit'] === '1')
 			{
 				if (Tools::getValue('id_carrier') == Configuration::get('PS_CARRIER_DEFAULT'))
-					$this->errors[] = Tools::displayError('You cannot disable the default carrier, please change your default carrier first.');
+					$this->errors[] = Tools::displayError('You cannot disable the default carrier, however you can change your defeault carrier. ');
 				else
 					parent::postProcess();
 			}
 			else
-				$this->errors[] = Tools::displayError('You do not have permission to edit here.');
+				$this->errors[] = Tools::displayError('You do not have permission to edit this.');
 		}
 		else
 		{
 			if ((Tools::isSubmit('submitDel'.$this->table) && in_array(Configuration::get('PS_CARRIER_DEFAULT'), Tools::getValue('carrierBox')))
 				|| (isset($_GET['delete'.$this->table]) && Tools::getValue('id_carrier') == Configuration::get('PS_CARRIER_DEFAULT')))
-					$this->errors[] = $this->l('Please set another carrier as default before deleting this one');
+					$this->errors[] = $this->l('Please set another carrier as default before deleting this one.');
 			else
 			{
 				// if deletion : removes the carrier from the warehouse/carrier association
@@ -640,7 +646,7 @@ class AdminCarriersControllerCore extends AdminController
 	{
 		$carrier = new $this->className($id);
 		if (!Validate::isLoadedObject($carrier))
-			die (Tools::displayError('Object cannot be loaded'));
+			die (Tools::displayError('The object cannot be loaded.'));
 		$zones = Zone::getZones(false);
 		foreach ($zones as $zone)
 			if (count($carrier->getZone($zone['id_zone'])))

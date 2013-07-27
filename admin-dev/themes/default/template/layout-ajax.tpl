@@ -1,5 +1,5 @@
 {*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,8 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision$
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
@@ -35,14 +34,14 @@
 {else}
 
 	{if isset($conf)}
-		<div class="conf">
+		<div class="alert">
 			{$conf}
 		</div>
 	{/if}
 
 	{if count($errors)} {* @todo what is ??? AND $this->_includeContainer *}
-		<div class="error">
-			<span style="float:right"><a id="hideError" href=""><img alt="X" src="../img/admin/close.png" /></a></span>
+		<div class="alert alert-danger">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
 			{if count($errors) == 1}
 				{$errors[0]}
 			{else}
@@ -58,26 +57,26 @@
 	{/if}
 
 	{if isset($informations) && count($informations) && $informations}
-		<div class="hint clear" style="display:block;">
+		<div class="alert alert-info" style="display:block;">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
 			{foreach $informations as $info}
-				{$info}<br />
+				{$info}<br/>
 			{/foreach}
-		</div><br />
+		</div>
 	{/if}
 
 	{if isset($confirmations) && count($confirmations) && $confirmations}
-		<div class="conf" style="display:block;">
+		<div class="alert alert-success" style="display:block;">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
 			{foreach $confirmations as $confirm}
 				{$confirm}<br />
 			{/foreach}
-		</div><br />
+		</div>
 	{/if}
 
 	{if count($warnings)}
-		<div class="warn">
-			<span style="float:right">
-				<a id="hideWarn" href=""><img alt="X" src="../img/admin/close.png" /></a>
-			</span>
+		<div class="alert alert-block">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
 			{if count($warnings) > 1}
 				{l s='There are %d warnings.' sprintf=count($warnings)}
 				<span style="margin-left:20px;" id="labelSeeMore">

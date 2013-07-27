@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,8 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 7307 $
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -32,6 +31,7 @@ class AdminAttributesGroupsControllerCore extends AdminController
 
 	public function __construct()
 	{
+		$this->bootstrap = true;
 		$this->context = Context::getContext();
 		$this->table = 'attribute_group';
 		$this->identifier = 'id_attribute_group';
@@ -42,23 +42,19 @@ class AdminAttributesGroupsControllerCore extends AdminController
 		$this->fields_list = array(
 			'id_attribute_group' => array(
 				'title' => $this->l('ID'),
-				'width' => 25,
 				'align' => 'center'
 			),
 			'name' => array(
 				'title' => $this->l('Name'),
-				'width' => 'auto',
 				'filter_key' => 'b!name',
 				'align' => 'left'
 			),
 			'count_values' => array(
 				'title' => $this->l('Values count'),
-				'width' => 120,
 				'align' => 'center',
 			),
 			'position' => array(
 				'title' => $this->l('Position'),
-				'width' => 40,
 				'filter_key' => 'a!position',
 				'position' => 'position',
 				'align' => 'center'
@@ -99,12 +95,11 @@ class AdminAttributesGroupsControllerCore extends AdminController
 			$this->lang = true;
 
 			if (!Validate::isLoadedObject($obj = new AttributeGroup((int)$id)))
-				$this->errors[] = Tools::displayError('An error occurred while updating status for object.').' <b>'.$this->table.'</b> '.Tools::displayError('(cannot load object)');
+				$this->errors[] = Tools::displayError('An error occurred while updating the status for an object.').' <b>'.$this->table.'</b> '.Tools::displayError('(cannot load object)');
 
 			$this->fields_list = array(
 				'id_attribute' => array(
 					'title' => $this->l('ID'),
-					'width' => 40,
 					'align' => 'center'
 				),
 				'name' => array(
@@ -117,14 +112,12 @@ class AdminAttributesGroupsControllerCore extends AdminController
 			if ($obj->group_type == 'color')
 				$this->fields_list['color'] = array(
 					'title' => $this->l('Color'),
-					'width' => 40,
 					'filter_key' => 'b!color'
 				);
 
 			$this->fields_list['position'] = array(
 				'title' => $this->l('Position'),
-				'width' => 40,
-				'filter_key' => 'cp!position',
+				'filter_key' => 'a!position',
 				'position' => 'position'
 			);
 
@@ -191,7 +184,7 @@ class AdminAttributesGroupsControllerCore extends AdminController
 		$this->fields_form = array(
 			'legend' => array(
 				'title' => $this->l('Attributes'),
-				'image' => '../img/admin/asterisk.gif'
+				'icon' => 'icon-info-sign'
 			),
 			'input' => array(
 				array(
@@ -199,7 +192,6 @@ class AdminAttributesGroupsControllerCore extends AdminController
 					'label' => $this->l('Name:'),
 					'name' => 'name',
 					'lang' => true,
-					'size' => 33,
 					'required' => true,
 					'hint' => $this->l('Invalid characters:').' <>;=#{}'
 				),
@@ -208,10 +200,8 @@ class AdminAttributesGroupsControllerCore extends AdminController
 					'label' => $this->l('Public name:'),
 					'name' => 'public_name',
 					'lang' => true,
-					'size' => 33,
 					'required' => true,
-					'hint' => $this->l('Invalid characters:').' <>;=#{}',
-					'desc' => $this->l('Group name displayed to the customer')
+					'hint' => $this->l('Group name displayed to the customer').'&nbsp;'.$this->l('Invalid characters:').' <>;=#{}'
 				),
 				array(
 					'type' => 'select',
@@ -223,7 +213,7 @@ class AdminAttributesGroupsControllerCore extends AdminController
 						'id' => 'id',
 						'name' => 'name'
 					),
-					'desc' => $this->l('Choose the type of the attribute')
+					'hint' => $this->l('Choose the type of the attribute')
 				)
 			)
 		);
@@ -238,7 +228,7 @@ class AdminAttributesGroupsControllerCore extends AdminController
 		}
 
 		$this->fields_form['submit'] = array(
-			'title' => $this->l('   Save   '),
+			'title' => $this->l('Save   '),
 			'class' => 'button'
 		);
 
@@ -258,7 +248,7 @@ class AdminAttributesGroupsControllerCore extends AdminController
 		$this->fields_form = array(
 			'legend' => array(
 				'title' => $this->l('Values'),
-				'image' => '../img/admin/asterisk.gif',
+				'icon' => 'icon-info-sign'
 			),
 			'input' => array(
 				array(
@@ -271,14 +261,13 @@ class AdminAttributesGroupsControllerCore extends AdminController
 						'id' => 'id_attribute_group',
 						'name' => 'name'
 					),
-					'desc' => $this->l('Choose the type of the attribute')
+					'hint' => $this->l('Choose the type of the attribute')
 				),
 				array(
 					'type' => 'text',
 					'label' => $this->l('Value:'),
 					'name' => 'name',
 					'lang' => true,
-					'size' => 33,
 					'required' => true,
 					'hint' => $this->l('Invalid characters:').' <>;=#{}'
 				)
@@ -310,15 +299,14 @@ class AdminAttributesGroupsControllerCore extends AdminController
 			'type' => 'color',
 			'label' => $this->l('Color:'),
 			'name' => 'color',
-			'size' => 33,
-			'desc' => $this->l('Choose a color with the color picker, or enter an HTML color (e.g. "lightblue", "#CC6600")')
+			'hint' => $this->l('Choose a color with the color picker, or enter an HTML color (e.g. "lightblue", "#CC6600")')
 		);
 
 		$this->fields_form['input'][] = array(
 			'type' => 'file',
 			'label' => $this->l('Texture:'),
 			'name' => 'texture',
-			'desc' => array(
+			'hint' => array(
 				$this->l('Upload color texture from your computer'),
 				$this->l('This will override the HTML color!')
 			)
@@ -331,7 +319,7 @@ class AdminAttributesGroupsControllerCore extends AdminController
 		);
 
 		$this->fields_form['submit'] = array(
-			'title' => $this->l('   Save   '),
+			'title' => $this->l('Save   '),
 			'class' => 'button'
 		);
 
@@ -431,7 +419,7 @@ class AdminAttributesGroupsControllerCore extends AdminController
 	{
 		if (!Combination::isFeatureActive())
 		{
-			$this->displayWarning($this->l('This feature has been disabled, you can activate it at:').
+			$this->displayWarning($this->l('This feature has been disabled. You can activate it at:').
 				' <a href="index.php?tab=AdminPerformance&token='.Tools::getAdminTokenLite('AdminPerformance').
 				'#featuresDetachables">'.$this->l('Performances').'</a>');
 			return;
@@ -498,11 +486,11 @@ class AdminAttributesGroupsControllerCore extends AdminController
 			default: // list
 				$this->toolbar_btn['new'] = array(
 					'href' => self::$currentIndex.'&amp;add'.$this->table.'&amp;token='.$this->token,
-					'desc' => $this->l('Add new Attributes')
+					'desc' => $this->l('Add New Attributes')
 				);
 				$this->toolbar_btn['newAttributes'] = array(
 					'href' => self::$currentIndex.'&amp;updateattribute&amp;token='.$this->token,
-					'desc' => $this->l('Add new Values'),
+					'desc' => $this->l('Add New Values'),
 					'class' => 'toolbar-new'
 				);
 		}
@@ -515,18 +503,18 @@ class AdminAttributesGroupsControllerCore extends AdminController
 		switch ($this->display)
 		{
 			case 'edit':
-				$bread_extended[] = $this->l('Edit new Attribute');
+				$bread_extended[] = $this->l('Edit New Attributes');
 				break;
 
 			case 'add':
-				$bread_extended[] = $this->l('Add new Attribute');
+				$bread_extended[] = $this->l('Add New Attributes');
 				break;
 
 			case 'editAttributes':
 				if ($this->id_attribute)
 					$bread_extended[] = $this->l('Edit Value');
 				else
-					$bread_extended[] = $this->l('Add new Value');
+					$bread_extended[] = $this->l('Add New Values');
 				break;
 		}
 
@@ -592,9 +580,9 @@ class AdminAttributesGroupsControllerCore extends AdminController
 		if (Tools::getValue('updateattribute') || Tools::isSubmit('deleteattribute') || Tools::isSubmit('submitAddattribute'))
 		{
 			if ($this->tabAccess['edit'] !== '1')
-				$this->errors[] = Tools::displayError('You do not have permission to edit here.');
+				$this->errors[] = Tools::displayError('You do not have permission to edit this.');
 			else if (!$object = new Attribute((int)Tools::getValue($this->identifier)))
-				$this->errors[] = Tools::displayError('An error occurred while updating status for object.').' <b>'.$this->table.'</b> '.Tools::displayError('(cannot load object)');
+				$this->errors[] = Tools::displayError('An error occurred while updating the status for an object.').' <b>'.$this->table.'</b> '.Tools::displayError('(cannot load object)');
 
 			if (Tools::getValue('position') !== false && Tools::getValue('id_attribute'))
 			{
@@ -607,7 +595,7 @@ class AdminAttributesGroupsControllerCore extends AdminController
 			else if (Tools::isSubmit('deleteattribute') && Tools::getValue('id_attribute'))
 			{
 				if (!$object->delete())
-					$this->errors[] = Tools::displayError('Failed to delete attribute.');
+					$this->errors[] = Tools::displayError('Failed to delete the attribute.');
 				else
 					Tools::redirectAdmin(self::$currentIndex.'&conf=1&token='.Tools::getAdminTokenLite('AdminAttributesGroups'));
 			}
@@ -641,13 +629,13 @@ class AdminAttributesGroupsControllerCore extends AdminController
 						$object = new $this->className();
 						if ($object->deleteSelection($_POST[$this->table.'Box']))
 							Tools::redirectAdmin(self::$currentIndex.'&conf=2'.'&token='.$this->token);
-						$this->errors[] = Tools::displayError('An error occurred while deleting selection.');
+						$this->errors[] = Tools::displayError('An error occurred while deleting this selection.');
 					}
 					else
 						$this->errors[] = Tools::displayError('You must select at least one element to delete.');
 				}
 				else
-					$this->errors[] = Tools::displayError('You do not have permission to delete here.');
+					$this->errors[] = Tools::displayError('You do not have permission to delete this.');
 				// clean position after delete
 				AttributeGroup::cleanPositions();
 			}
@@ -687,7 +675,11 @@ class AdminAttributesGroupsControllerCore extends AdminController
 		{
 			foreach ($this->_list as &$list)
 				if (file_exists(_PS_IMG_DIR_.$this->fieldImageSettings['dir'].'/'.(int)$list['id_attribute'].'.jpg'))
+				{
+					if (!isset($list['color']) || !is_array($list['color']))
+						$list['color'] = array();
 					$list['color']['texture'] = '../img/'.$this->fieldImageSettings['dir'].'/'.(int)$list['id_attribute'].'.jpg';
+				}
 		}
 		else
 		{

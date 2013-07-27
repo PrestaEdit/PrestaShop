@@ -1,5 +1,5 @@
 {*
-* 2007-2012 PrestaShop
+* 2007-2013 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,8 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision$
+*  @copyright  2007-2013 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
@@ -29,15 +28,15 @@
 {block name="override_tpl"}
 
 	{if !empty($limit_warning)}
-	<div class="warn">
+	<div class="alert alert-block">
 		{if $limit_warning['error_type'] == 'suhosin'}
-			{l s='Warning, your hosting provider is using the suhosin patch for PHP, which limits the maximum number of fields to post in a form:'}
+			{l s='Warning: Your hosting provider is using the suhosin patch for PHP, which limits the maximum number of fields allowed in a form:'}
 
 			<b>{$limit_warning['post.max_vars']}</b> {l s='for suhosin.post.max_vars.'}<br/>
 			<b>{$limit_warning['request.max_vars']}</b> {l s='for suhosin.request.max_vars.'}<br/>
-			{l s='Please ask your hosting provider to increase the suhosin post and request a limit of'}
+			{l s='Please ask your hosting provider to increase the suhosin limit to'}
 		{else}
-			{l s='Warning, your PHP configuration limits the maximum number of fields to post in a form:'}<br/>
+			{l s='Warning! Your PHP configuration limits the maximum number of fields allowed in a form:'}<br/>
 			<b>{$limit_warning['max_input_vars']}</b> {l s='for max_input_vars.'}<br/>
 			{l s='Please ask your hosting provider to increase the this limit to'}
 		{/if}
@@ -45,7 +44,7 @@
 	</div>
 	{else}
 
-		<div class="hint" style="display:block;">
+		<div class="alert alert-info" style="display:block;">
 			{l s='Some sentences to translate use this syntax: %s... These are variables, and PrestaShop take care of replacing them before displaying your translation. You must leave these in your translations, and place them appropriately in your sentence.' sprintf='%d, %s, %1$s, %2$d'}
 		</div><br /><br />
 
@@ -68,7 +67,7 @@
 		</script>
 
 		<div id="BoxUseSpecialSyntax">
-			<div class="warn">
+			<div class="alert alert-block">
 				<p class="syntax">
 					{l s='This expression uses this special syntax:'} <span>%d.</span><br />
 					{l s='You must use this syntax in your translations. Here are several examples:'}
