@@ -1217,10 +1217,10 @@
 			<!-- Sources block -->
 			{if (sizeof($sources))}
 			<div class="panel">
-				<div class="panel-heading">
+				<h3>
 					<i class="icon-globe"></i>
 					{l s='Sources'} <span class="badge">{$sources|@count}</span>
-				</div>
+				</h3>
 				<ul {if sizeof($sources) > 3}style="height: 200px; overflow-y: scroll;"{/if}>
 				{foreach from=$sources item=source}
 					<li>
@@ -1231,6 +1231,45 @@
 					</li>
 				{/foreach}
 				</ul>
+
+				<div class="table-responsive">
+					<table class="table" {if sizeof($sources) > 3}style="display: block; height: 200px; overflow-y: scroll;"{/if}>
+						<thead>
+							<tr>
+								<th>
+									<span class="title_box ">
+										{l s='Date'}
+									</span>
+								</th>
+								<th>
+									<span class="title_box ">
+										{l s='From'}
+									</span>
+								</th>
+								<th>
+									<span class="title_box ">
+										{l s='To'}
+									</span>
+								</th>
+								<th>
+									<span class="title_box ">
+										{l s='Keywords'}
+									</span>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+						{foreach from=$sources item=source}
+							<tr>
+								<td>{dateFormat date=$source['date_add'] full=true}</td>
+								<td>{if $source['http_referer'] != ''}<a href="{$source['http_referer']}">{parse_url($source['http_referer'], $smarty.const.PHP_URL_HOST)|regex_replace:'/^www./':''}</a>{else}-{/if}</td>
+								<td><a href="http://{$source['request_uri']}">{$source['request_uri']|truncate:100:'...'}</a></td>
+								<td>{if $source['keywords']}{$source['keywords']}{else}-{/if}</td>
+							</tr>
+						{/foreach}
+						</tbody>
+					</table>
+				</div>
 			</div>
 			{/if}
 
